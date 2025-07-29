@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>매물 등록 신청</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.mypage.css}" type="text/css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- ✅ 주소 검색용 (daum.Postcode 객체 제공) -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+</head>
+
+<body>
+<div layout:fragment="content" class="page-main">
+  <div class="user-mypage-container">
+    <div class="user-mypage-header">매물 등록 신청</div>
+
+    <form id="propertyForm" th:action="@{/realtor/signProperty}" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+      <!-- 매물 제목 -->
+      <div class="form-row">
+        <label for="title">매물 제목</label>
+        <input type="text" id="title" name="title" required />
+      </div>
+
+      <!-- 주소 입력 -->
+      <div class="form-row">
+        <label for="address1">주소</label>
+        <input type="text" id="zipcode" name="zipcode" placeholder="우편번호" readonly style="width:100px;" />
+        <input type="text" id="address1" name="address" placeholder="주소 검색 클릭" readonly onclick="execKakaoPostcode()" required />
+        <input type="text" id="address2" name="addressDetail" placeholder="상세 주소 입력" required />
+      </div>
+
+      <!-- 위도/경도 숨김 -->
+      <input type="hidden" id="latitude" name="latitude" />
+      <input type="hidden" id="longitude" name="longitude" />
+
+      <div class="form-row">
+        <label for="room_type">방 종류</label>
+        <input type="text" id="room_type" name="room_type" required />
+      </div>
+
+      <div class="form-row">
+        <label for="price">가격 정보</label>
+        <input type="text" id="price" name="price" required />
+      </div>
+
+      <div class="form-row">
+        <label for="area_m2">면적(m²)</label>
+        <input type="number" id="area_m2" name="area_m2" step="0.1" required />
+      </div>
+
+      <div class="form-row">
+        <label for="bed_count">방 수</label>
+        <input type="number" id="bed_count" name="bed_count" required />
+      </div>
+
+      <div class="form-row">
+        <label for="bathroom_count">화장실 수</label>
+        <input type="number" id="bathroom_count" name="bathroom_count" required />
+      </div>
+
+      <div class="form-row">
+        <label for="floor_info">층수 정보</label>
+        <input type="text" id="floor_info" name="floor_info" required />
+      </div>
+
+      <div class="form-row">
+        <label for="building_floors">건물 총 층수</label>
+        <input type="text" id="building_floors" name="building_floors" required />
+      </div>
+
+      <div class="form-row">
+        <label for="parking">주차 여부</label>
+        <input type="text" id="parking" name="parking" required />
+      </div>
+
+      <div class="form-row">
+        <label for="maintenance_cost">관리비</label>
+        <input type="text" id="maintenance_cost" name="maintenance_cost" />
+      </div>
+
+      <div class="form-row">
+        <label for="move_in_date">입주 가능일</label>
+        <input type="text" id="move_in_date" name="move_in_date" />
+      </div>
+
+      <div class="form-row">
+        <label for="approval_date">사용 승인일</label>
+        <input type="text" id="approval_date" name="approval_date" />
+      </div>
+
+      <div class="form-row">
+        <label for="complex_name">단지명 또는 건물명</label>
+        <input type="text" id="complex_name" name="complex_name" />
+      </div>
+
+      <div class="form-row">
+        <label for="household_num">총 세대수</label>
+        <input type="number" id="household_num" name="household_num" />
+      </div>
+
+      <div class="form-row">
+        <label for="exclusive_area_m2">전용면적(m²)</label>
+        <input type="number" id="exclusive_area_m2" name="exclusive_area_m2" step="0.1" />
+      </div>
+
+      <div class="form-row">
+        <label for="supply_area_m2">공급면적(m²)</label>
+        <input type="number" id="supply_area_m2" name="supply_area_m2" step="0.1" />
+      </div>
+
+      <div class="form-row">
+        <label for="hashtags">해시태그</label>
+        <input type="text" id="hashtags" name="hashtags" placeholder="#신축 #역세권 등" />
+      </div>
+
+      <div class="form-row">
+        <label for="options">옵션</label>
+        <textarea id="options" name="options" placeholder="예: 냉장고, 세탁기, 에어컨 등"></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="category">매물 유형</label>
+        <select id="category" name="category" required>
+          <option value="">－－ 선택하세요 －－</option>
+          <option value="아파트">아파트</option>
+          <option value="오피스텔">오피스텔</option>
+          <option value="빌라">빌라</option>
+          <option value="원룸/투룸">원룸/투룸</option>
+        </select>
+      </div>
+
+	  
+	  <div class="form-button-box">
+	         <div class="button-group">
+	           <button type="button" class="action-btn submit-btn" onclick="submitForm()">신청하기</button>
+	           <button type="button" class="action-btn cancel-btn" onclick="history.back()">취소</button>
+	         </div>
+	       </div>
+	     </form>
+    <!-- JS  -->
+
+	<script>
+		function execKakaoPostcode() {
+		   new daum.Postcode({
+		     oncomplete: function(data) {
+		       const roadAddress = data.roadAddress;
+		       const jibunAddress = data.jibunAddress;
+		       const fullAddr = roadAddress || jibunAddress;
+
+		       $('#zipcode').val(data.zonecode);
+		       $('#address1').val(fullAddr);
+
+		       fetch(`/api/geocode?query=${encodeURIComponent(fullAddr)}`)
+		         .then(res => res.json())
+		         .then(data => {
+		           if (data.documents && data.documents.length > 0) {
+		             const lat = data.documents[0].y;
+		             const lng = data.documents[0].x;
+		             $('#latitude').val(lat);
+		             $('#longitude').val(lng);
+		             console.log("📍 위도:", lat, "경도:", lng);
+		           } else {
+		             alert("❌ 좌표를 찾을 수 없습니다.");
+		           }
+		         })
+		         .catch(err => {
+		           console.error("❌ 오류:", err);
+		           alert("❌ 서버 오류 발생");
+		         });
+		     }
+		   }).open();
+		 }
+		function getCoordsFromServer(address) {
+		  $.get("/api/geocode", { query: address })
+		    .done(function(response) {
+		      let result;
+		      try {
+		        result = typeof response === "string" ? JSON.parse(response) : response;
+		      } catch (e) {
+		        console.error("❌ JSON 파싱 실패", e);
+		        return;
+		      }
+
+		      if (result && result.documents && result.documents.length > 0) {
+		        const doc = result.documents[0];
+		        document.getElementById("latitude").value = doc.y;
+		        document.getElementById("longitude").value = doc.x;
+		        console.log("📍 위도:", doc.y, "경도:", doc.x);
+		      } else {
+		        alert("❌ 해당 주소에 대한 좌표 정보가 없습니다.");
+		      }
+		    })
+		    .fail(function(err) {
+		      alert("❌ 서버에서 좌표 요청 실패");
+		      console.error(err);
+		    });
+		}
+		function submitForm() {
+		  const mainAddr = document.getElementById("address1").value;
+		  const detailAddr = document.getElementById("address2").value;
+		  const fullAddress = mainAddr + ' ' + detailAddr;
+
+		  // 합쳐진 주소를 address1 input에 다시 넣음 (name="address" 이므로 서버에서 처리됨)
+		  document.getElementById("address1").value = fullAddress;
+
+		  // 위경도 유효성 검사
+		  const lat = document.getElementById("latitude").value;
+		  const lng = document.getElementById("longitude").value;
+		  if (!lat || !lng) {
+		    alert("📍 주소 선택 후 좌표가 입력되어야 합니다.");
+		    return;
+		  }
+
+		  document.getElementById("propertyForm").submit();
+		}
+
+	</script>
+
+	  </div>
+	</div>
+	</body>
+	</html>

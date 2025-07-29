@@ -1,0 +1,100 @@
+@charset "UTF-8";
+
+.page-main{
+	width: 80%;
+	margin: 0 auto;
+}
+
+/*쉐어하우스 방 상세화면-----------------------------------------------*/
+.room-tab {
+  position: sticky;
+  top: 0; /* 헤더 높이에 맞춰 조절*/
+  z-index: 1000;
+  background-color: #fff;
+  display: flex;
+  list-style: none;
+  padding: 0;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 10px;
+}
+.room-tab li {
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: none;
+  margin-right: 4px;
+  color: #888;
+}
+.room-tab li.active {
+  font-weight: bold;
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+}
+
+.room-content {
+  display: none;
+}
+.room-content.active {
+  display: block;
+}
+
+/*쉐어하우스 방 이미지 스와이퍼*/
+.swiper-container {
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+.swiper-wrapper {
+  display: flex;
+  height: 100%;
+}
+.swiper-slide {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.swiper-slide img {
+/*   이미지 잘려도 영역에 가득 채움
+  width: 100%;
+  height: 100%; */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #e7e7e7;
+}
+/* 화살표 위치 조정 */
+.swiper-button-next,
+.swiper-button-prev {
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* 페이지네이션 위치 */
+.swiper-pagination {
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+}
+
+/*상세정보*/
+.room-name{
+  font-size: 22px;
+  font-weight: bold;
+}
+.room-capacity{
+  color: #888;
+}
+.info-item {
+  display: flex;
+  margin-bottom: 6px;
+}
+.info-label {
+  width: 120px; /* 항목 이름 고정 너비 */
+  font-weight: bold;
+  color: #333;
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>로그인 안내</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_user.css}">
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+    <div class="loginRegister-container">
+    	<img th:src="@{/assets/images/bangbanggoLogo.png}" width="250" height="200" />
+
+	    <button class="login-btn1 btn-kakao" th:onclick="|location.href='@{/oauth2/authorization/kakao}'|">카카오 계정으로 로그인</button>
+	    <button class="login-btn1 btn-naver" th:onclick="|location.href='@{/oauth2/authorization/naver}'|">네이버 계정으로 로그인</button>
+	    <button class="login-btn1 btn-default" th:onclick="|location.href='@{/user/login}'|">계정으로 로그인 | 중개사 로그인</button>
+		<hr size="1" noshade width="100%">
+	    <div class="link-area">
+	        아직 회원이 아니신가요? <a th:href="@{/user/RegisterTerms}">가입하기</a>
+	    </div>
+	    <div class="link-area">
+	        중개사로 가입하기 <a th:href="@{/user/RegisterRealtorTerms}">중개사 가입하기</a>
+	    </div>
+  	</div>
+</div>
+</body>
+</html>

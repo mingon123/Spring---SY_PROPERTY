@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.property.dao.PropertyEditRequestMapper">
+
+  	<!-- 수정 요청 등록 -->
+	<insert id="insertRequest" parameterType="PropertyEditRequestVO">
+	  INSERT INTO property_edit_request (
+	    id, property_id, user_num, requested_fields, reason, request_date, status
+	  ) VALUES (
+	    property_edit_request_seq.NEXTVAL,
+	    #{propertyId}, #{userNum}, #{requestedFields}, #{reason}, SYSDATE, '대기'
+	  )
+	</insert>
+
+   	<!-- 중개사가 요청한 리스트 목록 -->
+	<select id="getRequestsRealtor" parameterType="long" resultType="kr.spring.property.vo.PropertyEditRequestVO">
+	  SELECT 
+	    r.id,
+	    r.property_id AS propertyId,
+	    r.user_num AS userNum,
+	    r.requested_fields AS requestedFields,
+	    r.reason,
+	    r.request_date AS requestDate,
+	    r.status,
+	    p.room_number AS roomNumber,
+	    p.address AS address
+	  FROM property_edit_request r
+	  JOIN property p ON r.property_id = p.property_id
+	  WHERE p.realtor_num = #{userNum}
+	  ORDER BY r.request_date DESC
+	</select>
+
+
+	<select id="findByRealtorNum" parameterType="long" resultType="kr.spring.property.vo.PropertyEditRequestVO">
+	  SELECT r.*
+	  FROM property_edit_request r
+	  JOIN property p ON r.property_id = p.property_id
+	  WHERE p.realtor_num = #{realtorNum}
+	  ORDER BY r.request_date DESC
+	</select>
+	
+	<select id="findByPropertyId" parameterType="long" resultType="kr.spring.property.vo.PropertyEditRequestVO">
+	    SELECT 
+	        r.id,
+	        r.property_id AS propertyId,
+	        r.user_num AS userNum,
+	        r.requested_fields AS requestedFields,
+	        r.reason,
+	        r.request_date AS requestDate,
+	        r.status,
+	        p.address,
+	        p.room_number
+	    FROM property_edit_request r
+	    JOIN property p ON r.property_id = p.property_id
+	    WHERE r.property_id = #{propertyId}
+	    ORDER BY r.request_date DESC
+	</select>
+<select id="getRequestCountRealtor" resultType="int" parameterType="long">
+  SELECT COUNT(*) FROM property_edit_request WHERE user_num = #{userNum}
+</select>
+
+<!-- [추가] 페이지 단위 요청 조회 -->
+<select id="getRequestsPage" resultType="PropertyEditRequestVO" parameterType="map">
+  SELECT per.*, p.address
+  FROM property_edit_request per
+  JOIN property p ON per.property_id = p.property_id
+  WHERE per.user_num = #{userNum}
+  ORDER BY per.id DESC
+  OFFSET #{start} - 1 ROWS FETCH NEXT #{end} - #{start} + 1 ROWS ONLY
+</select>
+
+</mapper>

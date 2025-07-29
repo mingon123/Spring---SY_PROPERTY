@@ -1,0 +1,263 @@
+@charset "UTF-8";
+
+/* 레이아웃 */
+#main_header {
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  padding: 0 30px;
+  
+}
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: none;
+  margin: 0 auto;
+  height: 100px;
+}
+.menu-title img {
+  height: 150px;         
+  width: auto;          
+  object-fit: contain;  
+}
+.menu-list {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+.menu-main-item a {
+  font-size: 14pt;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  transition: 0.2s;
+}
+.menu-main-item a:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+.menu-login {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12pt;
+}
+.menu-item a {
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
+}
+.menu-item a:hover {
+  color: #007bff;
+}
+.menu-title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-right: auto; 
+ }
+.menu-item img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 0;     
+  padding-left: 0;    
+}  
+.my-photo {
+  object-fit: cover;
+  object-position: top;
+  border-radius: 50%;
+}
+/* 공통 등록, 수정 폼 --------------------------- */
+form {
+  margin: 0 auto;
+  padding: 10px 10px 30px 10px;
+}
+form ul li label {
+  width: 100px;
+  display: inline-block;
+}
+ul {
+  list-style: none;
+}
+input,
+select {
+  margin-top: 4px;
+  padding: 5px;
+}
+.page-one form ul li input[type="text"],
+.page-one form ul li input[type="password"],
+.page-one form ul li input[type="email"] {
+  width: 350px;
+}
+input[type="checkbox"] {
+  margin: 11px 0 10px 0;
+}
+.form-notice {
+  margin-left: 116px;
+}
+
+/* Admin, MY페이지 공통 --------------------------- */
+.side-height {
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+#page_nav {
+  float: left;
+  width: 20%;
+  min-height: 530px;
+}
+#page_body {
+  width: 1000px;
+  flex: 1;
+  padding: 20px;
+  margin: 0 auto;
+}
+.page-clear {
+  clear: both;
+}
+.side-bar {
+  margin: 10px 10px 10px 0;
+  padding: 10px;
+  margin-bottom: -9999px;
+  padding-bottom: 9999px;
+  background-color: #cecccc;
+}
+.side-bar ul {
+  margin: 0;
+  padding: 0;
+}
+.side-bar ul li {
+  padding: 5px 10px 5px 10px;
+}
+.side-bar ul li img {
+  margin-left: 3px;
+}
+
+/* 공통 버튼 --------------------------- */
+[type="submit"],
+[type="button"] {
+  height: 30px;
+}
+.menu-btn {
+  width: 100%;
+  height: 50px;
+  font-size: 12pt;
+  background-color: #fcfcfc;
+  border-color: #b7b5b5;
+  border-radius: 5px;
+}
+.default-btn {
+  padding: 4px 20px;
+  border: 1px solid #09aa5c;
+  border-radius: 2px;
+  color: #fff;
+  background-color: #09aa5c;
+  font-weight: bold;
+  cursor: pointer;
+}
+.default-btn:hover {
+  color: #09aa5c;
+  background-color: #fff;
+  transition: 0.2s ease-out;
+  height: 30px;
+}
+
+/* footer 화면 -------------------- */
+.footer-bar {
+  width: 100%;
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+  padding: 20px;
+  text-align: center;
+  font-size: 11px;
+  color: #333;
+  line-height: 1.6;
+}
+.footer-bar a {
+  color: #333;
+  margin: 0 5px;
+  text-decoration: none;
+}
+.footer-bar a:hover {
+  text-decoration: underline;
+  color: #666;
+}
+
+/* 공통 메시지
+---------------------------*/
+.result-display{
+	width: 400px;
+	height: 200px;
+	margin: 50px auto;
+	border: 1px solid #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.error-color{
+	color: #f00;
+}
+
+/* 공통 정렬
+---------------------------*/
+.align-center{
+	text-align: center;;
+}
+.align-right{
+	text-align: right;
+}
+.align-left{
+	text-align: left;
+}
+
+/* 페이지 기본 레이아웃
+---------------------------*/
+.page-main{
+	width: 80%;
+	margin: 0 auto;
+	padding: 30px;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+.page-one{
+	width: 600px;
+	margin: 0 auto;
+}
+.page-title{
+	font-family: "맑은 고딕";
+	font-size: 20pt;
+	font-weight: bold;
+	text-align: center;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #333;
+}
+
+/* 전체 레이아웃
+---------------------------*/
+body{
+	margin: 0;
+	padding: 0;
+}
+a:link{
+	text-decoration: none;
+	color: #000000;
+}
+a:visited {
+	text-decoration: none;
+	color: #000000;
+}
+a:hover {
+	text-decoration: underline;
+	color: #999999;
+}
+
+
+

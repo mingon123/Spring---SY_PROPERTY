@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>신고 목록</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	
+	<h2>신고 목록</h2><hr>
+	<div class="result-display" th:if="${count == 0}">표시할 신고내역이 없습니다.</div>
+	<th:block th:if="${count > 0}">
+	<div class="notice-box">
+		<table class="striped-table">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>등록일</th>
+			</tr>
+			<tr th:each="report, stat : ${list}">
+				<td th:text="${count - stat.index}"></td>
+				<td>
+				  <a th:href="@{/admin/report/detail(report_num=${report.report_num})}" th:text="${report.title}"></a>
+				</td>
+				<td th:text="${report.report_date}"></td>
+			</tr>
+		</table>
+	</div>
+	</th:block>
+	<div class="align-center" th:utext="${page}"></div>
+</div>
+</body>
+</html>
+
+

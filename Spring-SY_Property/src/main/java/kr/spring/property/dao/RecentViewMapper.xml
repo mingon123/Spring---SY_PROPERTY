@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.property.dao.RecentViewMapper">
+
+  <select id="selectUserProperty" resultType="kr.spring.property.vo.RecentViewVO">
+    SELECT * FROM recent_view 
+    WHERE user_num = #{userNum} AND property_id = #{propertyId}
+  </select>
+  
+  <insert id="insertView">
+    INSERT INTO recent_view (recent_id, user_num, property_id, view_date)
+    VALUES (recent_view_seq.NEXTVAL, #{user_num}, #{property_id}, SYSDATE)
+  </insert>
+  	
+  <update id="updateView">
+    UPDATE recent_view 
+    SET view_date = SYSDATE
+    WHERE user_num = #{userNum} AND property_id = #{property_id}
+  </update>
+  
+  <delete id="deleteOldView">
+    DELETE FROM recent_view 
+    WHERE recent_id IN (
+		SELECT recent_id FROM recent_view(
+			WHERE user_num = #{userNum}
+			ORDER BY view_date DESC
+			OFFSET #{limit} ROWS
+		)
+	)
+  </delete>
+  
+  <select id="selectRecentProperties" resultType="kr.spring.property.vo.PropertyVO">
+    SELECT p.*
+    FROM recent_view r
+    JOIN property p ON r.property_id = p.property_id
+    WHERE r.user_num = #{userNum}
+    ORDER BY r.view_date DESC
+    FETCH FIRST 10 ROWS ONLY
+  </select>
+  
+</mapper>

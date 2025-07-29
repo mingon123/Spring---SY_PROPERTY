@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>약관동의</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_user.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/user.terms.js}"></script>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="terms-wrap">
+        <div class="terms-title">약관 동의</div>
+        <hr size="1" noshade width="100%">
+        <div class="terms-desc">환영합니다! 서비스 이용을 위해 아래 약관에 동의해주세요.</div>
+        <form id="terms_form" autocomplete="off">
+            <ul class="terms-list">
+                <li>
+                    <label for="agreeAll" class="bold">
+                        <input type="checkbox" id="agreeAll">
+                        네, 모두 동의합니다.
+                    </label>
+                </li>
+                <li>
+                    <label for="chk-age">
+                        <input type="checkbox" id="chk-age" class="agree" data-required="true">
+                        [필수] 만 14세 이상입니다.
+                    </label>
+                </li>
+                <li>
+                    <label for="chk-terms">
+                        <input type="checkbox" id="chk-terms" class="agree" data-required="true">
+                        [필수] 서비스 이용약관 동의
+                    </label>
+                    <a href="/user/terms/service" target="_blank" class="terms-link" aria-label="서비스 이용약관 새창으로 열기">&#8250;</a>
+                </li>
+                <li>
+                    <label for="chk-privacy">
+                        <input type="checkbox" id="chk-privacy" class="agree" data-required="true">
+                        [필수] 개인정보 처리방침 동의
+                    </label>
+                    <a href="/user/terms/privacy" target="_blank" class="terms-link" aria-label="개인정보 처리방침 새창으로 열기">&#8250;</a>
+                </li>
+            </ul>
+            <div class="terms-notice">
+                만 14세 이상 회원 가입이 가능합니다.<br>
+                해당 내용은 <a th:href="@{/user/terms}" target="_blank">이용약관 및 정책</a>에서도 확인이 가능합니다.
+            </div>
+            <button type="button" id="submitBtn" class="terms-btn" disabled onclick="location.href='registerRealtor'">동의하고 진행하기</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

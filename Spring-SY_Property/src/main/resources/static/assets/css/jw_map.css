@@ -1,0 +1,929 @@
+@charset "UTF-8";
+#custom-mapType-controls {
+  display: flex;
+  gap: 5px;
+}
+#custom-mapType-controls button {
+  width: 60px;
+  height: 40px;
+  font-size: 14px;
+}
+
+/* 위치 고정 */
+#custom-zoom-controls,
+#custom-mapType-select,
+#custom-mapType-controls {
+  position: absolute;
+  right: 10px;
+  z-index: 1000;
+}
+
+/* 각 섹션 위치 */
+/* 줌 컨트롤은 세로 정렬 */
+#custom-zoom-controls {
+  top: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#custom-mapType-select {
+  top: 450px;
+}
+#custom-mapType-controls {
+  top: 450px;
+  display: none;
+  flex-direction: row;
+  gap: 6px;
+}
+
+/* 버튼 기본 스타일 */
+#custom-zoom-controls button,
+#custom-mapType-select button,
+#custom-mapType-controls button {
+  width: 75px;
+  height: 40px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#custom-zoom-controls button {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#custom-zoom-controls button:hover,
+#custom-mapType-select button:hover,
+#custom-mapType-controls button:hover,
+#custom-draw-line button:hover {
+  background-color: #e0f0ff;
+  border-color: #3399ff;
+  color: #007bff;
+}
+
+/* 현재 선택된 버튼 강조 */
+#custom-mapType-controls button.map-type-active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+#measureBtn {
+	position: absolute;
+	top: 400px;
+	right: 10px;
+	z-index: 1000;
+	background: white;
+	border: 1px solid #ccc;
+	padding: 8px 12px;
+	font-size: 13px;
+	cursor: pointer;
+	width: 75px;
+  	height: 40px;
+  	background-color: #fff;
+  	border-radius: 6px;
+  	transition: all 0.2s ease;
+  	box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#cancelMeasureBtn {
+  margin-left: 8px;
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* 거리재기 기능에서 마우스 움직일시 실시간 박스*/
+.total-distance-bubble {
+  position: relative;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  min-width: 130px;
+}
+
+.recent-distance {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 6px 0;
+}
+
+.summary-title {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.total-distance-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.total-distance-row .label {
+  color: #444;
+}
+
+.total-distance-row .value {
+  color: #376ff9;
+  font-weight: 500;
+}
+
+.recent-distance .value {
+  color: #376ff9;
+  font-weight: 500;
+}
+
+.tip {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 6px;
+  text-align: center;
+}
+
+#measureBtn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/*거리재기 버튼 클릭시 나오는 설명란*/
+.distance-guide {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: #333;
+  margin-top: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  max-width: 360px;
+  margin: 20px auto;
+  margin-left: 9px;
+}
+
+.distance-guide img {
+  width: 150px;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.distance-guide p:first-of-type {
+  font-weight: 600;
+  font-size: 17px;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.distance-guide p{
+  font-size: 14.5px;
+  color: #666;
+  line-height: 1.5;
+}
+.distance-guide p:last-of-type {
+  font-size: 14.5px;
+  color: #666;
+  line-height: 1.5;
+}
+
+#cancelMeasureBtn {
+  margin-top: 14px;
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13.5px;
+  transition: background 0.2s ease;
+}
+
+#cancelMeasureBtn:hover {
+  background: #d32f2f;
+}
+
+/*map 설정*/
+.map-content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 200px);
+}
+
+#map {
+  flex-grow: 1;
+  height: 100%;
+  width: 100%;
+}
+
+/*동네별 띄워지는 마커 설정*/
+.custom-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background-color: #e6e6fa;
+  border: 2px solid 	#b497d6;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-family: sans-serif;
+  font-size: 13px;
+  color: #5e478c;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.custom-marker .marker-count {
+  font-weight: bold;
+  color: #5e478c;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.custom-marker .marker-region {
+  font-size: 13px;
+  color: #222;
+}
+
+.custom-marker.hovered {
+  z-index: 9999;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+/*줌이 15 이상일 때 나오는 클러스터링 마커*/
+.circle-marker {
+  width: 50px;
+  height: 50px;
+  background-color: #1e40af ;
+  color: #ffffff; 
+  border-radius: 50%;
+  text-align: center;
+  line-height: 50px;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+  opacity: 0.8;
+}
+
+.circle-marker:hover {
+  transform: scale(1.2);
+  z-index: 9999;
+}
+
+/* 리스트 전체 영역 - 스크롤 가능하게 */
+/*
+.property-list {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding: 0px;
+}
+*/
+
+.property-list {
+  display: flex;
+  flex-direction: column; /* 리스트 형태 */
+  gap: 0px;
+}
+
+.property-card {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+  background-color: #fff;
+  height: 140px;
+}
+
+.property-card:hover {
+  background-color: rgb(204, 215, 232);
+}
+
+.property-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.property-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.property-price {
+  font-weight: bold;
+  font-size: 16px;
+  color: #1e40af;
+  margin-bottom: 4px;
+}
+
+.property-type,
+.property-desc {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.property-summary {
+  font-size: 13px;
+  color: #777;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-box {
+  width: 380px !important;
+  background-color: #fff !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  height: calc(100vh - 200px) !important;
+  border-right: 1px solid #ccc !important;
+  padding: 0px !important;
+
+  /* 스크롤바 개선 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.1) transparent;
+}
+
+.menu-box::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menu-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu-box::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.menu-box::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2); 
+}
+
+.property-header-tag {
+  display: inline-block;
+  background-color: #111;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin: 10px 0 15px 10px; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  user-select: none;
+  width:60px;
+ 
+}
+
+.menu-link.active {
+  background-color: #e6f0ff;
+  border: 2px solid #007bff;
+  color: #007bff;
+}
+
+.map-side-bar ul li a:hover {
+  background-color: #e6f0ff;
+}
+
+#empty-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #777;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+#empty-message p{
+  margin-top: 12px; 
+  color: #777;
+}
+
+#empty-message img {
+  width: 80px;
+  opacity: 0.6;
+  margin-bottom: 10px;
+}
+
+#custom-location-button button {
+  width: 75px; 
+  height: 40px; 
+  padding: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+#custom-location-button {
+  position: absolute;
+  top: 550px;
+  right: 10px;
+  z-index: 1000;
+}
+
+#custom-location-button button:hover {
+  background-color: #e0f0ff;
+  border-color: #3399ff;
+}
+
+#custom-location-button img {
+  width: 22px; 
+  height: 22px;
+  pointer-events: none;
+}
+
+#custom-clear-line {
+  position: absolute;
+  top: 350px;
+  right: 10px;
+  z-index: 1000;
+}
+
+#clearLinesBtn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 75px;
+  height: 40px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#clearLinesBtn:hover {
+  background: #d32f2f;
+}
+
+.property-img-wrapper {
+  position: relative;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 23px;
+  height: 23px;
+  cursor: pointer;
+}
+
+/* 매물 상세 */
+/* 오른쪽 상세 보기 패널 */
+.property-detail-panel {
+  position: absolute;
+  top: 0;
+  left: 0px;
+  height: 100%;
+  display: none;
+  overflow-y: auto;
+  border-left: 1px solid #eee;
+}
+
+.property-detail-panel.active {
+  display: block;
+}
+
+
+.property-detail-panel.active {
+  display: block;
+}
+
+/* 상세카드 내부 스타일 */
+.property-detail-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  font-family: 'Noto Sans KR', sans-serif;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 닫기 버튼 */
+.detail-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #666;
+}
+/*!!*/
+.map-content {
+  display: flex;
+  height: 100vh;
+}
+
+.menu-box {
+  width: 400px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.map-area {
+  position: relative;
+  flex-grow: 1;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+.property-detail-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+  background: white;
+  display: none;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.property-detail-panel.active {
+  display: block;
+}
+
+.property-detail-card {
+  padding: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.detail-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.property-detail-title {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 400;
+  color: #222;
+}
+
+.detail-info {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.detail-info div {
+  margin-bottom: 5px;
+}
+
+.detail-tags {
+  margin-bottom: 20px;
+}
+
+.detail-tags .tag {
+  display: inline-block;
+  background-color: #f2f2f2;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #333;
+  margin: 2px 5px 2px 0;
+}
+
+.detail-actions {
+  text-align: right;
+}
+
+.chat-btn {
+  background-color: #ff5a5f;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.chat-btn:hover {
+  background-color: #e0484e;
+}
+
+.detail-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #888;
+  cursor: pointer;
+}
+
+.detail-close-btn:hover {
+  color: #000;
+}
+
+.property-detail-card {
+  padding: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  position: relative;
+}
+
+.detail-image-wrapper {
+  position: relative;
+}
+
+.detail-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.property-detail-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.property-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff5a5f;
+  margin-bottom: 16px;
+}
+
+.detail-info {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.detail-tags .tag {
+  display: inline-block;
+  background-color: #f2f2f2;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #333;
+  margin: 2px 5px 2px 0;
+}
+
+.detail-actions {
+  text-align: right;
+}
+
+.chat-btn {
+  background-color: #ff5a5f;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.chat-btn:hover {
+  background-color: #e0484e;
+}
+
+.detail-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 22px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  z-index: 50;
+  cursor: pointer;
+  line-height: 28px;
+  text-align: center;
+}
+
+.detail-close-btn:hover {
+  color: #000;
+}
+
+.property-detail-panel {
+    overflow-y: auto;
+    scrollbar-width: thin;     
+    scrollbar-color: #ccc transparent;
+}
+
+.property-detail-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.property-detail-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.property-detail-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(150, 150, 150, 0.4); /* 연한 회색 */
+    border-radius: 4px;
+    border: none;
+}
+
+.image-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 220px; 
+  margin-bottom: 10px;
+}
+
+.detail-image {
+  width: 180px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.property-price-detail {
+  font-size: 22px;
+  font-weight: 600;
+  color: #ff5a5f;
+  margin-bottom: 16px;
+}
+
+.property-detail-panel {
+  width: 440px;
+  max-height: 100%;
+  overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  transition: transform 0.3s ease-in-out;
+  scrollbar-width: thin;
+}
+
+.property-detail-card {
+  padding: 20px;
+}
+
+.property-price-detail {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 10px 16px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.property-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.detail-info {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.detail-info h2 {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 12px 0 8px;
+}
+
+.icon-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.icon-info img {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.detail-tags .tag {
+  display: inline-block;
+  background: #f1f1f1;
+  color: #555;
+  font-size: 13px;
+  padding: 4px 8px;
+  margin: 3px 3px 0 0;
+  border-radius: 6px;
+}
+
+.detail-actions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.detail-actions .chat-btn {
+  background: #ff4d4f;
+  color: white;
+  padding: 10px 16px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.detail-actions .chat-btn:hover {
+  background: #e4393d;
+}
+
+.detail-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ddd;
+  border: none;
+  font-size: 22px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 30px;
+  text-align: center;
+}
+
+.price-section {
+  font-size: 22px;
+  font-weight: 600;
+  color: #ff5a5f;
+  margin-bottom: 16px;
+}
+
+.detail-hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 16px 0;
+}

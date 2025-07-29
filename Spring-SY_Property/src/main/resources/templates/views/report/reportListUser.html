@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>신고 내역</title>
+    <link rel="stylesheet" href="/assets/css/he.css"/>  
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+<h2>신고 내역</h2>
+<hr>
+
+<div id="no-report-message" style="display:none;">표시할 신고가 없습니다.</div>
+
+<div class="notice-box">
+    <table class="striped-table">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>신고유형</th>
+                <th>신고 대상자</th>
+                <th>제목</th>
+                <th>신고 일자</th>
+            </tr>
+        </thead>
+        <tbody id="report-tbody">
+            <!-- JS가 AJAX로 여기에 목록을 동적 생성합니다 -->
+        </tbody>
+    </table>
+</div>
+
+<div class="button-area" style="margin-bottom: 10px;">
+    <input type="button" class="btn-register" value="신고 작성" onclick="location.href='/report/write'">
+</div>
+
+<script src="/assets/js/jquery-3.7.1.min.js"></script> 
+<script src="/assets/js/reportUser.js"></script>
+
+</div>
+</body>
+</html>

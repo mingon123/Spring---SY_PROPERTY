@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+<head>
+  <meta charset="UTF-8">
+  <title>비밀번호 변경</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.pwchange.css}" type="text/css">
+</head>
+<body>
+
+<div layout:fragment="content" class="page-main">
+  <div class="pwchange-container">
+    <div class="pwchange-header">비밀번호 변경</div>
+
+    <form id="changePasswordForm" th:action="@{/user/changePassword}" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+      <div class="pwchange-row">
+        <label for="currentPassword">현재 비밀번호</label>
+        <input type="password" id="currentPassword" name="currentPassword" required />
+      </div>
+
+      <div class="pwchange-row">
+        <label for="newPassword">새 비밀번호</label>
+        <input type="password" id="newPassword" name="newPassword" required />
+      </div>
+
+      <div class="pwchange-row">
+        <label for="confirmPassword">새 비밀번호 확인</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required />
+      </div>
+
+      <div class="pwchange-form-box">
+        <div class="pwchange-btn-group">
+          <button type="submit" class="pwchange-btn pwchange-btn-primary">변경</button>
+          <button type="button" class="pwchange-btn pwchange-btn-primary" onclick="history.back()">취소</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script th:src="@{/assets/js/changePasswd.js}"></script>
+</body>
+</html>

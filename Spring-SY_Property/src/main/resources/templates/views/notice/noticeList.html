@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>공지사항 목록</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	
+	<h2>공지사항 목록</h2><hr>
+	<div class="result-display" th:if="${count == 0}">표시할 공지사항이 없습니다.</div>
+	<th:block th:if="${count > 0}">
+	<div class="notice-box">
+		<table class="striped-table">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>등록일</th>
+			</tr>
+			<tr th:each="notice, stat : ${list}">
+				<td th:text="${count - stat.index}"></td>
+				<td><a th:href="@{/admin/notice/detail(notice_num=${notice.notice_num})}">[[${notice.title}]]</a></td>
+				<td th:text="${notice.reg_date}"></td>
+			</tr>
+		</table>
+	</div>
+	</th:block>
+	<div class="button-area">
+		<input type="button" value="등록" class="btn-register" onclick="location.href='write'">
+	</div>
+	<div class="align-center" th:utext="${page}"></div>
+</div>
+</body>
+</html>
+
+

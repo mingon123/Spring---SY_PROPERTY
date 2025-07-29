@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>뉴스 상세</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+	<!-- 제목 -->
+	<div class="news-title">[[${news.title}]]</div>
+
+	<!-- 작성일 -->
+	<div class="news-regdate">[[${news.reg_date}]]</div><hr style="margin-bottom: 20px;" />
+
+	<!-- 이미지 -->
+	<div class="news-image"
+	     th:if="${news != null and not #strings.isEmpty(news.photo_name) &&
+	              (#strings.endsWith(news.photo_name,'.jpg') ||
+	               #strings.endsWith(news.photo_name,'.JPG') ||
+	               #strings.endsWith(news.photo_name,'.jpeg') ||
+	               #strings.endsWith(news.photo_name,'.JPEG') ||
+	               #strings.endsWith(news.photo_name,'.gif') ||
+	               #strings.endsWith(news.photo_name,'.GIF') ||
+	               #strings.endsWith(news.photo_name,'.png') ||
+	               #strings.endsWith(news.photo_name,'.PNG'))}">
+	 	<img th:src="@{/assets/upload/{photo_name}(photo_name=${news.photo_name})}" style="width:400px; height:430px">             
+	</div>
+	
+	<!-- 내용 -->
+	<div class="news-content">[[${news.content}]]</div>
+	
+	<div class="button-area">
+		<input type="button" class="btn-register" value="목록" onclick="location.href='list'">
+	</div>
+</div>
+</body>
+</html>

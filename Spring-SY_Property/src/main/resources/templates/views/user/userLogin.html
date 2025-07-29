@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>회원로그인</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_user.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/user.login.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="login-container">
+  <div class="login-box">
+    <h2>계정으로 로그인</h2>
+    <hr size="1" noshade width="100%">
+    <p class="sub-text">서비스 이용을 위해 로그인해주세요.</p>
+    <!-- 로그인 폼 --> 
+		<form th:action="@{/user/login}" id="member_login" method="post">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+		    <!-- 로그인 실패 메시지 -->
+			<div class="align-center error-invalid error-color" th:if="${error == 'error'}">
+			    아이디 또는 비밀번호 불일치
+			</div>
+			<div class="align-center error-invalid error-color" th:if="${error == 'error_suspended'}">
+			    정지회원입니다
+			</div>
+
+	      	<div class="form-group">
+	        	<label for="id">아이디</label>
+	        	<input type="text" id="id" name="id" placeholder="아이디 입력" autocomplete="off" class="form-input">
+	        	<div id="error_id" class="error-color"></div>
+	      	</div>
+	
+		    <div class="form-group">
+	        	<label for="passwd">비밀번호</label>
+	        	<input type="password" id="passwd" name="passwd" placeholder="비밀번호 입력" class="form-input">
+	        	<div id="error_passwd" class="error-color"></div>
+	      	</div>
+	
+	      	<div class="form-group checkbox">
+	        	<label for="remember-me">
+	          		<input type="checkbox" name="remember-me" id="remember-me">로그인상태유지
+	        	</label>
+	      	</div>
+	      	<input type="submit" value="로그인" class="login-btn">
+	    </form>
+	    <div class="login-links">
+	      	<a th:href="@{/user/sendPassword}">비밀번호 찾기</a> | 
+	      	<a th:href="@{/user/loginRegisterUser}">회원가입 하러가기</a>
+	    </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   		 			<!-- 유니크하게 명시해야함 -->
+<mapper namespace="kr.spring.sharehouse.dao.SharehouseMapper">
+	<!-- (컬럼명과 프로퍼티명이 다른 경우 명시해주어야 함) -->
+	<resultMap type="sharehouseVO" id="sharehouseMap">
+            <result property="sharehouseRoomVO.maintenance_fee" column="maintenance_fee"/>
+            <result property="sharehouseRoomVO.duration_min" column="duration_min"/>          
+	</resultMap>
+	
+	<!-- sql 태그와 include 태그를 이용해 SQL문 재사용 -->
+	<!-- 검색 (TODO:기존 검색방식 말고 사이트처럼 검색되도록 구현해보기) -->
+	<sql id="sharehouseSearch">
+		<where>
+			<if test="sido != null and sido != ''">
+				s.sido = #{sido}
+			</if>
+			<if test="sigungu != null and sigungu != ''">
+				AND s.sigungu = #{sigungu}
+			</if>
+		</where>		
+	</sql>	
+	
+	<!-- 정렬 -->
+	<sql id="sharehouseOrder">
+		<if test="order == 1">
+			ORDER BY s.house_id DESC
+		</if>
+		<if test="order == 2">
+			ORDER BY s.s_hit DESC
+		</if>
+	</sql>
+
+	<!-- 쉐어하우스 전체/검색 레코드 수 -->
+	<select id="selectRowCount" parameterType="map" resultType="integer">
+		SELECT
+		  COUNT(*)
+		FROM sharehouse s
+		<include refid="sharehouseSearch"/>
+	</select>	
+	
+	<!-- 쉐어하우스 전체/검색 목록 -->
+	<select id="selectList" parameterType="map" resultMap="sharehouseMap">
+		SELECT
+		  *
+		  FROM (SELECT
+		  		  a.*,
+		  		  rownum rnum
+		  		FROM (SELECT
+		  				  s.house_id,
+						  s.name,
+						  s.s_state,						  
+						  s.s_hit,						  
+						  s.sido,
+						  s.sigungu,
+						  s.dong,
+						  s.gender_type_cd,
+						  s.deposit_min,
+						  s.deposit_max,
+						  s.price_min,
+						  s.price_max,
+						  s.maintenance_fees,
+						  s.s_reg_date,
+						  s.operator,
+						  /* sharehouse_room 테이블 조인 */
+						  r.fee_min,
+						  r.fee_max,
+						  r.stay_min,
+						  r.stay_max					 			  					  				  						  
+					 FROM sharehouse s			
+					 /* 최소-최대 관리비 및 최소 이용기간 */
+					 LEFT OUTER JOIN (
+					      SELECT house_id, 
+					      MIN(duration_min) AS stay_min, 
+					      MIN(duration_max) AS stay_max, 
+					      MIN(maintenance_fee) AS fee_min, 
+					      MAX(maintenance_fee) AS fee_max
+					      FROM sharehouse_room 
+					      GROUP BY house_id
+						  ) r ON s.house_id = r.house_id
+					 <include refid="sharehouseSearch"/>
+					 <include refid="sharehouseOrder"/>)a)
+		<![CDATA[
+		WHERE rnum >= #{start} AND rnum <= #{end}
+		]]>
+	</select>
+	
+	<select id="selectSharehouse" parameterType="long" resultType="sharehouseVO">
+		SELECT 
+		    s.*, 
+		    (SELECT MIN(duration_min) FROM sharehouse_room WHERE house_id = s.house_id) AS stay_min,
+		    (SELECT MAX(duration_max) FROM sharehouse_room WHERE house_id = s.house_id) AS stay_maxMax,
+		    (SELECT MIN(duration_max) FROM sharehouse_room WHERE house_id = s.house_id) AS stay_maxMin,
+		    (SELECT MIN(maintenance_fee) FROM sharehouse_room WHERE house_id = s.house_id) AS fee_min,
+    		(SELECT MAX(maintenance_fee) FROM sharehouse_room WHERE house_id = s.house_id) AS fee_max
+		FROM sharehouse s
+		WHERE s.house_id = #{house_id}
+	</select>
+	
+	<select id="selectSharehouseRooms" parameterType="map" resultType="sharehouseRoomVO">
+	    SELECT * FROM sharehouse_room
+	    WHERE house_id = #{house_id}
+	    ORDER BY room_id
+	</select>
+	
+	<!-- 관리자 -->
+    <!-- 쉐어하우스 수정 -->
+    <update id="updateSharehouse" parameterType="sharehouseVO">
+        UPDATE sharehouse
+        SET
+            name = #{name},
+            s_state = #{s_state},
+            address = #{address},
+            sido = #{sido},
+            sigungu = #{sigungu},
+            dong = #{dong},
+            latitude = #{latitude},
+            longitude = #{longitude},
+            floor_info = #{floor_info},
+            gender_type_cd = #{gender_type_cd},
+            deposit_min = #{deposit_min},
+            deposit_max = #{deposit_max},
+            price_min = #{price_min},
+            price_max = #{price_max},
+            <!-- maintenance_fees = #{maintenance_fees}, -->
+            enter_age_min = #{enter_age_min},
+            enter_age_max = #{enter_age_max},
+            structure = #{structure},
+            house_info = #{house_info},
+            move_requirements = #{move_requirements},
+            operator = #{operator},
+            realtor_num = #{realtor_num},
+            s_modi_date = SYSDATE
+        WHERE house_id = #{house_id}
+    </update>
+
+    <!-- 쉐어하우스 Room(방) 수정 -->
+    <update id="updateSharehouseRoom" parameterType="sharehouseRoomVO">
+        UPDATE sharehouse_room
+        SET
+            room_name = #{room_name},
+            room_state = #{room_state},
+            capacity = #{capacity},
+            deposit = #{deposit},
+            monthly_price = #{monthly_price},
+            maintenance_fee = #{maintenance_fee},
+            duration_min = #{duration_min},
+            duration_max = #{duration_max},
+            options = #{options},
+            room_info = #{room_info}
+        WHERE room_id = #{room_id}
+    </update>
+    <!-- Room(방) 추가 -->
+    <insert id="insertSharehouseRoom" parameterType="sharehouseRoomVO">
+        INSERT INTO sharehouse_room
+            (room_id, house_id, room_name, room_state, capacity, deposit, monthly_price, maintenance_fee, duration_min, duration_max, options, room_info)
+        VALUES (sharehouse_room_seq.nextval, #{house_id}, #{room_name}, #{room_state}, #{capacity}, #{deposit}, #{monthly_price}, #{maintenance_fee}, #{duration_min}, #{duration_max}, #{options}, #{room_info})
+    </insert>
+
+    <!-- Room 이미지 추가/삭제 -->
+    <insert id="insertSharehouseRoomImg" parameterType="sharehouseRoomImgVO">
+        INSERT INTO sharehouse_room_img
+            (shr_img_id, room_id, shr_img_name, shr_img_seq)
+        VALUES (sharehouse_room_img_seq.nextval, #{room_id}, #{shr_img_name}, #{shr_img_seq})
+    </insert>
+    <delete id="deleteSharehouseRoomImg">
+        DELETE FROM sharehouse_room_img WHERE room_id = #{room_id} AND shr_img_seq = #{shr_img_seq}
+    </delete>
+
+    <!-- 역 정보 추가/삭제 -->
+    <insert id="insertSharehouseSubway" parameterType="sharehouseSubwaysVO">
+        INSERT INTO sharehouse_subways
+            (subway_id, house_id, station_name, line_short, distance)
+        VALUES (sharehouse_subways_seq.nextval, #{house_id}, #{station_name}, #{line_short}, #{distance})
+    </insert>
+    <delete id="deleteSharehouseSubways">
+        DELETE FROM sharehouse_subways WHERE house_id = #{house_id}
+    </delete>
+
+    <!-- 학교 정보 추가/삭제 -->
+    <insert id="insertSharehouseSchool" parameterType="sharehouseSchoolsVO">
+        INSERT INTO sharehouse_schools
+            (school_id, house_id, school_name, distance)
+        VALUES (sharehouse_schools_seq.nextval, #{house_id}, #{school_name}, #{distance})
+    </insert>
+    <delete id="deleteSharehouseSchools">
+        DELETE FROM sharehouse_schools WHERE house_id = #{house_id}
+    </delete>
+
+    <!-- 쉐어하우스 이미지 추가 -->
+    <insert id="insertSharehouseImg" parameterType="sharehouseImgVO">
+        INSERT INTO sharehouse_img
+            (sh_img_id, house_id, sh_img_name, sh_img_type, sh_img_seq)
+        VALUES (sharehouse_img_seq.nextval, #{house_id}, #{sh_img_name}, #{sh_img_type}, #{sh_img_seq})
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>BangBangGo</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/common.css}" >
+	<link rel="stylesheet" th:href="@{/assets/css/hd.css}" type="text/css">
+	<link rel="stylesheet" th:href="@{/assets/css/jw_map.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/hd.chat.css}" >
+	<link rel="stylesheet" type="text/css" th:href="@{/assets/css/hd.chatPopup.css}" >
+	<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=zeq1aw9idd&callback=initMap"></script>
+	<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/chat.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/regionCoordinates.js}"></script>
+	<script type="text/javascript">
+	var map; //전역 선언
+
+	function initMap() {
+    	// naver 객체가 확실히 로드됐는지 체크
+    	if (typeof naver !== 'undefined' && naver.maps) {
+    		var mapOptions = {
+    		    	zoomControl: false, //줌 컨트롤 표시 여부
+    		    	minZoom:9, //지도의 최소 줌 레벨
+    		    	maxZoom:18, //지도의 최대 줌 레벨
+    		    	zoom:13, //지도의 초기 줌 레벨
+    		    	disableKineticPan:true, //관성 드래깅 끄기
+    		    	tileTransition: true //타일 fade-in 효과 켜기
+    			};
+    		map = new naver.maps.Map('map', mapOptions);
+    		naver.maps.Event.once(map, 'init', function() {
+    			setupDistanceMeasuring(map);
+    			drawMarkersOnMap();
+    			setupUserLocation();
+    		});
+    	} else {
+      		console.error('naver 객체가 아직 로드되지 않았습니다.');
+    	}
+  	}
+	</script>
+	<script type="text/javascript" th:src="@{/assets/js/MarkerClustering.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/customMap.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/measureDistance.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/propertyBox.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/clusterPropertyMarker.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/goToMyLocation.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/propertyDetail.js}"></script>
+</head>
+<body>
+<div id="main">
+	<!-- 헤더 -->
+	<div th:insert="fragments/header::header"></div>
+
+	<div class="map-container">	  
+		<!-- 사이드 메뉴 -->
+		<aside th:insert="fragments/map_nav :: sidebar" style="border-right: 1px solid #ddd;"></aside>
+		<!-- 오른쪽 전체 영역 -->
+		<div class="map-right-area">
+	    	<!-- 검색 필터 바 (지도/메뉴박스 위) -->
+	    	<div th:insert="fragments/map_search_filter :: topbar" class="search-filter-box"></div>
+	    	<!-- 메뉴박스 + 지도 영역 -->
+	    	<div class="map-content">
+	      		<div class="menu-box">
+					<!-- 로그인한 사용자만 히든값 렌더링 -->
+					<div th:if="${loginUser != null}">
+					  <input type="hidden" id="user_num_hidden" th:value="${loginUser.user_num}" />
+					  <input type="hidden" id="user_role_hidden" th:value="${loginUser.authority}" />
+					</div>
+
+	        		<div class="property-header-tag">매물</div>
+					
+	        		<!-- 매물 리스트 스크롤 영역 -->
+					<div class="property-list"></div>
+					
+  					<!-- 거리재기 기능 활성화 시 -->
+	        		<div class="distance-guide" id="distance-guide" style="display:none;">
+      					<img src="/assets/images/distanceLine.png" alt="거리재기" style="max-width:100%; height:auto;">
+      					<p>거리를 계산할 지점을 지도에서 클릭해주세요.</p>
+      					<p>거리재기 버튼을 누르면 새로 선을 그릴 수 있지만,</p>
+      					<p>이전에 그린 선이 존재할 경우 이전에 그린 선은 삭제됩니다.</p>
+      					<button id="cancelMeasureBtn">취소</button>
+    				</div>
+    				<!-- 매물 리스트가 비어있는 경우 -->
+    				<div id="empty-message" style="display: none;">
+  						<img src="/assets/images/no_property.png" alt="매물없음" style="width: 80px; opacity: 0.6;">
+  						<p>조건에 맞는 방이 없습니다.<br>위치 및 맞춤필터를 조정해보세요.</p>
+					</div>
+	      		</div>
+	      		
+	      		<div class="map-area">
+	      			<!-- 매물 상세정보 패널 (지도와 별도, 고정된 오른쪽 위치) -->
+					<div id="property-detail-panel" class="property-detail-panel" style="display: none;">
+  						<!-- <button id="close-detail-btn" class="detail-close-btn">×</button> -->
+					</div>
+					
+	      			<!-- 지도 관련  -->
+	      			<div id="map" style="flex-grow: 1;height:100%;width:100%;position:relative;"></div>
+	      			
+	      			<!-- 줌관련 커스텀 버튼 -->
+	      			<div id="custom-zoom-controls">
+						<button id="zoom-in">+</button>
+						<button id="zoom-out">−</button>
+		   			</div>
+		   			<!-- 지도 유형 선택관련 커스텀 버튼 -->
+		   			<div id="custom-mapType-select">
+			 			<button id="map-type-select">지도</button>
+					</div>
+					<div id="custom-mapType-controls" style="display: none;">
+						<button id="map-type-normal">일반</button>
+						<button id="map-type-satellite">위성</button>
+						<button id="map-type-hybrid">혼합</button>
+						<button id="map-type-terrain">지형도</button>
+					</div>
+					<!-- 거리재기 관련 버튼 -->
+					<div id="custom-clear-line" style="display: none;">
+  						<button id="clearLinesBtn">선 삭제</button>
+					</div>
+					<div id="custom-draw-line">
+						<button id="measureBtn">거리재기</button>
+					</div>
+					<!-- 사용자 현재위치 이동 버튼 -->
+					<div id="custom-location-button">
+						<button id="go-to-myLocation">
+							<img src="/assets/images/myLocation.png" alt="내 위치"/>
+						</button>
+					</div>
+				</div>
+	    	</div>
+	  	</div>
+	</div>
+</div>
+<!-- footer 시작 -->
+<div th:insert="fragments/footer::footer"></div>
+<!-- footer 끝 -->
+<script>
+
+/*
+//-------------------------사용자 위치에 따른 마커 표시------------
+if(navigator.geolocation){
+	navigator.geolocation.getCurrentPosition(function(position){
+		const userLat = position.coords.latitude;
+		const userLng = position.coords.longitude;
+		
+		const userLocation = new naver.maps.LatLng(userLat,userLng);
+		map.setCenter(userLocation);
+		
+		new naver.maps.Marker({
+			position: userLocation,
+			map: map,
+			title: "현재 위치" 
+		});
+	},function(err){
+		console.error("위치 오류", err);
+	});
+} else{
+	alert("이 브라우저는 이 기능을 지원하지 않습니다.");
+}
+*/
+
+/*
+// 사이드 메뉴 눌렀을 때 메뉴 리스트 동적으로 바꿔주기 
+document.addEventListener("DOMContentLoaded", function(){
+	const menuBox = document.querySelector(".menu-box");
+	const menuLinks = document.querySelectorAll(".menu-link");
+	
+	// ---------------------예시 내용---------------------
+	// 나중에 데이터베이스, 자바랑 연결
+	const menuContents = {
+	   room: ['방 보기', '월세 시세', '옵션별 보기','채팅방'],
+	   apartment: ['단지 정보', '실거래가', '매매 시세'],
+	   house: ['주택 현황', '전세 시세'],
+	   officetel: ['오피스텔 시세', '옵션별 보기'],
+	   sale: ['분양 일정', '청약 정보']
+	};
+	//-------------------------------------------------
+	
+	menuLinks.forEach(link=>{
+		link.addEventListener("click",function(e){
+			e.preventDefault();
+			const type = this.dataset.type;
+			const items = menuContents[type] || ["메뉴 선택 하세요"];
+			
+			menuBox.innerHTML = '';
+			
+			items.forEach(item => {
+				const div = document.createElement('div');
+				div.className = 'menu-summary';
+				div.textContent = item;
+				menuBox.appendChild(div);
+			})
+		})
+	})
+})
+*/
+
+
+
+</script>
+
+<div id="chat-modal" class="chat-popup-overlay">
+  <div class="chat-popup-box">
+    <div class="chat-popup-header">
+      <span>💬 채팅방</span>
+      <button class="chat-popup-close">&times;</button>
+    </div>
+    <iframe id="chat-iframe" src="" width="100%" height="100%" frameborder="0"></iframe>
+  </div>
+</div>
+
+
+</body>
+</html>

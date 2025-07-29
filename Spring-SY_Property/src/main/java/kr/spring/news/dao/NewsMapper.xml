@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.news.dao.NewsMapper">
+
+  <!-- news 목록 -->
+  <select id="selectList" parameterType="map"
+          resultType="kr.spring.news.vo.NewsVO">
+    SELECT *
+    FROM (
+      SELECT a.*, rownum rnum
+      FROM (
+        SELECT news_num, title, content, reg_date
+        FROM news
+        ORDER BY news_num DESC
+      ) a
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+  </select>
+
+  <!-- news 총 개수 -->
+  <select id="selectRowCount" resultType="int">
+    SELECT COUNT(*) FROM news
+  </select>
+
+  <!-- news 등록 -->
+  <insert id="insertNews" parameterType="kr.spring.news.vo.NewsVO">
+    INSERT INTO news (
+      news_num, title, content, reg_date, photo, photo_name
+    ) VALUES (
+      news_seq.nextval, #{title}, #{content}, SYSDATE, #{photo,jdbcType=BLOB}, #{photo_name,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <!-- news 상세 -->
+  <select id="selectNews" parameterType="long"
+          resultType="kr.spring.news.vo.NewsVO">
+    SELECT * FROM news
+    WHERE news_num = #{news_num}
+  </select>
+
+  <!-- news 수정 -->
+  <update id="updateNews" parameterType="kr.spring.news.vo.NewsVO">
+    UPDATE news
+    SET
+   	<if test="photo_name != null">
+	photo_name=#{photo_name},
+	</if>
+   	title = #{title},
+   	content = #{content}
+    WHERE news_num = #{news_num}
+  </update>
+
+  <!-- news 삭제 -->
+  <delete id="deleteNews" parameterType="long">
+    DELETE FROM news WHERE news_num = #{news_num}
+  </delete>
+
+</mapper>

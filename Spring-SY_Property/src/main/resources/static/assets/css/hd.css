@@ -1,0 +1,148 @@
+
+/* hd.css */
+.map-container {
+  display: flex;
+  height: 100%; 
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.map-side-bar {
+  margin-top: 5px;
+  width: 80px;
+}
+
+.map-side-bar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.map-side-bar ul li {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.map-side-bar ul li a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  background-color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  font-size: 12px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.map-side-bar ul li a span {
+  display: block;
+  line-height: 1.2;
+}
+
+.map-side-bar ul li a img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.map-area {
+  flex-grow: 1;
+  height: 100%;
+}
+
+/* 사이드 바 옆에 있는 메뉴 바 */
+.menu-summary {
+  background-color: lightblue;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu-summary:hover {
+  background-color: #007bff;
+  color: green;
+}  
+.map-container {
+    display: flex;
+    height: 100%; 
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 오른쪽 영역 (검색바 + 지도 + 메뉴) */
+  .map-right-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* 검색 필터 바 */
+  .search-filter-box {
+    display: flex;
+    gap: 12px;
+    background-color: #f7f7f7; 
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  
+  /* 드롭다운 버튼 스타일 개선 */
+  .search-filter-box select {
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  
+  /* 필터 박스 내부 정렬 및 여백 조정 */
+  .search-filter-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* 메뉴와 지도 나란히 */
+  .map-content {
+    display: flex;
+    flex: 1;
+  }
+
+  /* 지도 */
+  .map-area {
+    flex-grow: 1;
+    height: 100%;
+  }
+  
+  /* 채팅방 입장 스타일  */
+  .property-detail-actions {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .chat-realtor-btn {
+    background-color: #1e40af;
+    color: white;
+    padding: 12px 24px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  }
+
+  .chat-realtor-btn:hover {
+    background-color: #3749c2;
+  }

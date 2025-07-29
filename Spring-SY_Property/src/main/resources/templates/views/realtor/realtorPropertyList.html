@@ -1,0 +1,57 @@
+<!-- 목록 페이지: views/realtor/realtorPropertyList.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+<head>
+  <meta charset="UTF-8">
+  <title>내 매물 목록</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.realtorlist.css}" />
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+  <div class="user-mypage-container">
+    <div class="rplist-header">내 매물 목록</div>
+
+    <div class="rplist-table-box">
+      <table class="rplist-table">
+        <thead>
+        <tr>
+          <th>매물 제목</th>
+          <th>주소</th>
+          <th>카테고리</th>
+          <th>상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="property : ${propertyList}">
+          <td>
+            <a th:href="@{/realtor/propertyDetail/{id}(id=${property.property_id})}"
+               th:text="${property.title}" style="color:#2c3e50; text-decoration:underline;"></a>
+          </td>
+          <td>
+			<a th:href="@{/realtor/propertyDetail/{id}(id=${property.property_id})}" 
+			   th:text="${property.address}" style="color:#2c3e50; text-decoration:underline;"></a>
+		   </td>
+          <td th:text="${property.category}"></td>
+          <td th:text="${property.status}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(propertyList)}">
+          <td colspan="4" style="text-align:center;">등록된 매물이 없습니다.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+	<!-- 페이징 출력 -->
+	<div class="rplist-paging" th:utext="${page}"></div>
+
+	<div class="rplist-actions">
+	      <a th:href="@{/realtor/editRequestList}" class="rplist-btn rplist-btn-cancel">수정/삭제 요청 목록</a>
+	    </div>
+    <div class="rplist-actions">
+      <a th:href="@{/realtor/signProperty}" class="rplist-btn rplist-btn-cancel">매물 등록하기</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

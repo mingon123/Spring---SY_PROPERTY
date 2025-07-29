@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_admin}">
+<head>
+<meta charset="UTF-8">
+<title>쉐어하우스 상세</title>
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<style>
+    .admin-detail-section { margin-bottom: 32px; }
+    .room-table, .img-table, .info-table { width: 100%; border-collapse: collapse; }
+    .room-table th, .room-table td,
+    .img-table th, .img-table td,
+    .info-table th, .info-table td { border: 1px solid #ccc; padding: 8px; }
+    .img-thumb { max-width: 120px; max-height: 80px; }
+</style>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+    <h2>쉐어하우스 상세정보 (관리자)</h2>
+
+    <!-- 1. 기본 정보 -->
+    <div class="admin-detail-section">
+        <h3>기본 정보</h3>
+        <table class="info-table">
+            <tr>
+                <th>이름</th>
+                <td th:text="${sharehouseVO.name}"></td>
+                <th>운영자</th>
+                <td th:text="${sharehouseVO.operator}"></td>
+            </tr>
+            <tr>
+                <th>주소</th>
+                <td colspan="3" th:text="${sharehouseVO.sido + ' ' + sharehouseVO.sigungu + ' ' + sharehouseVO.dong + ' ' + sharehouseVO.address}"></td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td th:text="${sharehouseVO.s_state == 0 ? '거래중' : '거래완료'}"></td>
+                <th>등록일</th>
+                <td th:text="${#dates.format(sharehouseVO.s_reg_date, 'yyyy-MM-dd')}"></td>
+            </tr>
+            <tr>
+                <th>최소/최대 보증금</th>
+                <td th:text="${sharehouseVO.deposit_min + ' / ' + sharehouseVO.deposit_max}"></td>
+                <th>최소/최대 월세</th>
+                <td th:text="${sharehouseVO.price_min + ' / ' + sharehouseVO.price_max}"></td>
+            </tr>
+            <tr>
+                <th>최소/최대 관리비</th>
+                <td th:text="${sharehouseVO.fee_min + ' / ' + sharehouseVO.fee_max}"></td>
+                <th>입주가능 연령</th>
+                <td th:text="${sharehouseVO.enter_age_min + ' ~ ' + sharehouseVO.enter_age_max}"></td>
+            </tr>
+            <tr>
+                <th>성별 구분</th>
+                <td th:text="${sharehouseVO.gender_type_cd}"></td>
+                <th>건물 형태</th>
+                <td th:text="${sharehouseVO.structure}"></td>
+            </tr>
+            <tr>
+                <th>층 정보</th>
+                <td th:text="${sharehouseVO.getFloorInfo()}"></td>
+                <th>위도/경도</th>
+                <td th:text="${sharehouseVO.latitude + ', ' + sharehouseVO.longitude}"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 2. 이미지(대표/전체) -->
+    <div class="admin-detail-section">
+        <h3>쉐어하우스 사진</h3>
+        <table class="img-table">
+            <tr th:if="${#lists.isEmpty(houseImages)}">
+                <td>등록된 사진이 없습니다.</td>
+            </tr>
+            <tr th:each="img : ${houseImages}">
+                <td>
+                    <img th:src="@{'/sharehouse/image/' + ${img.sh_img_name}}" class="img-thumb" alt="쉐어하우스사진">
+                    <div th:text="'SEQ: ' + ${img.sh_img_seq}"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 3. 평면도/구조 이미지 -->
+    <div class="admin-detail-section">
+        <h3>구조/평면도</h3>
+        <table class="img-table">
+            <tr th:if="${#lists.isEmpty(structureImages)}">
+                <td>등록된 구조/평면도 이미지가 없습니다.</td>
+            </tr>
+            <tr th:each="img : ${structureImages}">
+                <td>
+                    <img th:src="@{'/sharehouse/image/' + ${img.sh_img_name}}" class="img-thumb" alt="평면도">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 4. 방 정보 + 각 방 이미지 -->
+    <div class="admin-detail-section">
+        <h3>방 목록</h3>
+        <table class="room-table">
+            <thead>
+                <tr>
+                    <th>방ID</th>
+                    <th>방이름</th>
+                    <th>상태</th>
+                    <th>인원</th>
+                    <th>보증금</th>
+                    <th>월세</th>
+                    <th>관리비</th>
+                    <th>최소/최대기간</th>
+                    <th>옵션</th>
+                    <th>이미지</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(rooms)}">
+                    <td colspan="10">등록된 방이 없습니다.</td>
+                </tr>
+                <tr th:each="room : ${rooms}">
+                    <td th:text="${room.room_id}"></td>
+                    <td th:text="${room.room_name}"></td>
+                    <td th:text="${room.room_state == 0 ? '공실' : '입주중'}"></td>
+                    <td th:text="${room.capacity}"></td>
+                    <td th:text="${room.deposit}"></td>
+                    <td th:text="${room.monthly_price}"></td>
+                    <td th:text="${room.maintenance_fee}"></td>
+                    <td th:text="${room.duration_min + ' ~ ' + room.duration_max}"></td>
+                    <td th:text="${room.options}"></td>
+                    <td>
+                        <th:block th:each="img : ${roomImagesMap[room.room_id]}">
+                            <img th:src="@{'/sharehouse/roomimg/' + ${img.shr_img_name}}" class="img-thumb" alt="방사진">
+                        </th:block>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 5. 근처 역 -->
+    <div class="admin-detail-section">
+        <h3>근처 역</h3>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>역명</th>
+                    <th>노선</th>
+                    <th>거리(m)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(subways)}">
+                    <td colspan="3">등록된 역 정보가 없습니다.</td>
+                </tr>
+                <tr th:each="subway : ${subways}">
+                    <td th:text="${subway.station_name}"></td>
+                    <td th:text="${subway.line_short}"></td>
+                    <td th:text="${subway.distance}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 6. 근처 학교 -->
+    <div class="admin-detail-section">
+        <h3>근처 학교</h3>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>학교명</th>
+                    <th>거리(m)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(schools)}">
+                    <td colspan="2">등록된 학교 정보가 없습니다.</td>
+                </tr>
+                <tr th:each="school : ${schools}">
+                    <td th:text="${school.school_name}"></td>
+                    <td th:text="${school.distance}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 7. 소개/입주조건 -->
+    <div class="admin-detail-section">
+        <h3>소개</h3>
+        <div th:text="${sharehouseVO.house_info}"></div>
+    </div>
+    <div class="admin-detail-section">
+        <h3>입주 조건</h3>
+        <div th:text="${sharehouseVO.move_requirements}"></div>
+    </div>
+
+    <!-- 수정/삭제/목록 버튼 -->
+    <div style="margin-top: 32px;">
+        <a th:href="@{/sharehouse/admin_modify/{id}(id=${sharehouseVO.house_id})}" class="button">수정</a>
+        <form th:action="@{/sharehouse/admin_delete/{id}(id=${sharehouseVO.house_id})}" method="post" style="display:inline;"
+              th:onsubmit="return confirm('정말 삭제하시겠습니까?');">
+            <button type="submit" class="button" style="background:#a33;">삭제</button>
+        </form>
+        <a th:href="@{/sharehouse/admin_list}" class="button">목록</a>
+    </div>
+</div>
+</body>
+</html>

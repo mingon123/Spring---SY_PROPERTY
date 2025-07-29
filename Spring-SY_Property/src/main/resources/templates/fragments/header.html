@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<th:block th:fragment="header">
+  <div id="main_header">
+    <div class="header-wrapper">
+
+	<!-- 위치 수정 -->
+      <!-- 로고 -->
+      <div class="menu-title" sec:authorize="!isAuthenticated() || principal.userVO.authorityOrdinal < 4">
+        <img th:src="@{/assets/images/bangbanggoLogo.png}"
+             th:onclick="|location.href='@{/main/main}'|"
+             style="cursor:pointer;" alt="BangBangGo 로고" width="150" height="150" />
+      </div>
+	  <div class="menu-title" sec:authorize="hasAuthority('ROLE_ADMIN')">
+	  	<img th:src="@{/assets/images/bangbanggoLogo.png}"
+             th:onclick="|location.href='@{/main/admin}'|"
+             style="cursor:pointer;" alt="BangBangGo 로고" width="150" height="150" />
+      </div>
+      <div class="menu-title" sec:authorize="hasAuthority('ROLE_N_REALTOR')">
+	  	<img th:src="@{/assets/images/bangbanggoLogo.png}"
+             th:onclick="|location.href='@{/main/nRealtor}'|"
+             style="cursor:pointer;" alt="BangBangGo 로고" width="150" height="150" />
+      </div>
+      
+      <!-- 중앙 메뉴 -->
+	  <div class="menu-list">
+	    <div class="menu-main-item"><a th:href="@{/map}">지도</a></div>
+	<!--<div class="menu-main-item"><a th:href="@{/board/list}">분양</a></div>-->
+	    <div class="menu-main-item"><a th:href="@{/sharehouse/list}">쉐어하우스</a></div>
+	    <div class="menu-main-item"><a th:href="@{/property/favorite}">관심목록</a></div>
+	  </div>
+      <!-- 로그인/회원가입 -->
+      <div class="menu-login">
+        <th:block sec:authorize="isAuthenticated() and !hasAuthority('ROLE_N_REALTOR')">
+          <div class="menu-item">
+            <a th:href="@{/user/myPage}">마이페이지</a>
+            <img th:src="@{/assets/images/mypage.png}" width="20" height="20">
+          </div>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
+          <div class="menu-item">
+            <th:block sec:authorize="hasAuthority('ROLE_REALTOR')">
+			    <img th:src="@{/user/realtorPhotoView}" />
+			</th:block>
+			<th:block sec:authorize="!hasAuthority('ROLE_REALTOR')">
+			    <img th:src="@{/user/photoView}" />
+			</th:block>
+            <span class="user-name" th:text="${#authentication.principal.userVO.userName}"></span>
+          </div>
+          <div class="menu-item">
+            <a href="#" id="logout">
+              <img th:src="@{/assets/images/logout.png}" width="20" height="20">로그아웃
+            </a>
+            <form th:action="@{/user/logout}" method="post" style="display:none;" id="frm_logout"></form>
+            <script>
+              const logout = document.getElementById('logout');
+              logout.onclick = function(event) {
+                document.getElementById('frm_logout').submit();
+                event.preventDefault();
+              }
+            </script>
+          </div>
+        </th:block>
+
+        <th:block sec:authorize="!isAuthenticated()">
+        	<div class="menu-item-login">
+        		<a th:href="@{/user/loginRegisterUser}">
+        			<img th:src="@{/assets/images/login.png}" width="20" height="20">
+        			로그인 | 회원가입
+        		</a> 
+        	</div>
+        </th:block>
+      </div>
+
+    </div>
+  </div>
+</th:block>
+</html>

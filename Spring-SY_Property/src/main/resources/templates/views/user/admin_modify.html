@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_admin}">
+<head>
+<meta charset="UTF-8">
+<meta name="csrf-header" th:content="${_csrf.headerName}">
+<meta name="csrf-token" th:content="${_csrf.token}">
+<title>회원정보 수정</title>
+<script th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/assets/js/user.modify.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2 th:text="|(${userVO.id}) 님의 정보 수정|"></h2>
+	<form th:object="${userVO}" th:action="@{admin_update}" method="post" id="admin_modify" class="admin-modify-form">
+  		<input type="hidden" th:field="*{user_num}">
+  		<input type="hidden" th:field="*{userDetail.user_num}">
+
+		<div class="user-top-box">
+			<div class="user-photo-box">
+			  	<img th:src="@{/user/viewProfile(user_num=${userVO.user_num})}" class="my-photo"/>
+			  	<p class="photo-label">프로필</p>
+			</div>
+	  		<div class="user-info-box">
+	    		<div class="user-authority">
+		      		<label>회원권한</label>
+		      		<div th:if="${userVO.authority != 'ROLE_ADMIN'}" class="radio-group">
+		        		<label><input type="radio" th:field="*{authority}" value="ROLE_SUSPENDED">정지</label>
+		        		<label><input type="radio" th:field="*{authority}" value="ROLE_USER">일반</label>
+		      		</div>
+	      			<div th:if="${userVO.authority == 'ROLE_ADMIN'}">
+	        			<input type="radio" th:field="*{authority}" value="ROLE_ADMIN" checked disabled>관리자
+	      			</div>
+	    		</div>
+	    		
+	    		<div class="user-account-type">
+				  	<label>계정 유형</label>
+				  	<span th:text="${userVO.oauth == 1 ? '소셜 계정' : '일반 계정'}" style="font-weight:bold;"></span>
+				</div>
+	  		</div>
+		</div>
+
+		<!-- 메인 폼 입력 -->
+		<div class="form-grid-container">
+		  	<div class="form-grid-box">
+		    	<label>이름</label>
+		    	<input type="text" th:field="*{userDetail.name}" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.name}" class="error-color"></span>
+		  	</div>
+			<div class="form-grid-box nick-group">
+			  	<label>별명</label>
+			  	<div class="nick-row">
+			    	<input type="text" th:field="*{nick_name}" id="nick_name" th:errorclass="field-error" />
+			    	<button type="button" id="confirm_nick" class="check-btn" style="display: none;">중복체크</button>
+			  	</div>
+			  	<span id="message_nick" class="msg-block"></span>
+			  	<span th:errors="*{nick_name}" class="error-color"></span>
+			</div>
+		  	<div class="form-grid-box">
+		    	<label>이메일</label>
+		    	<input type="email" th:field="*{userDetail.email}" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.email}" class="error-color"></span>
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>전화번호</label>
+		    	<input type="text" th:value="*{userDetail.formattedPhone}" name="userDetail.phone" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.phone}" class="error-color"></span>
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>신고횟수</label>
+		    	<input type="number" th:field="*{report_count}" th:errorclass="field-error" min="0" max="3"/>
+		    	<span th:errors="*{report_count}" class="error-color"></span>
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>우편번호</label>
+		    	<div class="zipcode-group">
+		      		<input type="text" th:field="*{userDetail.zipcode}" id="zipcode" th:errorclass="field-error" />
+		      		<button type="button" onclick="execDaumPostcode()" class="check-btn" style="width:110px;">우편번호 찾기</button>
+		    	</div>
+		    	<span th:errors="*{userDetail.zipcode}" class="error-color"></span>
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>주소</label>
+		    	<input type="text" th:field="*{userDetail.address1}" id="address1" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.address1}" class="error-color"></span>
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>상세주소</label>
+		    	<input type="text" th:field="*{userDetail.address2}" id="address2" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.address2}" class="error-color"></span>
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>등록일</label>
+		    	<input type="text" th:value="*{userDetail.reg_date}" id="reg_date" readonly />
+		  	</div>
+		  	<div class="form-grid-box">
+		    	<label>최근 수정일</label>
+		    	<input type="text" th:value="${userVO.userDetail.modi_date}" id="modi_date" readonly />
+		  	</div>
+		</div>
+		<div class="button-row">
+		  	<button type="submit">수정</button>
+		  	<button type="button" id="delete-btn" th:data-user-num="${userVO.user_num}" th:data-redirect-url="@{/user/admin_list}">삭제</button>
+		  	<button type="button" onclick="location.href='admin_list'">목록</button>
+		</div>
+	</form>
+
+<!-- 다음 우편번호 API -->
+<div id="layer" style="display:none;position:fixed;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch;">
+  <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer"
+       style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()" alt="닫기 버튼">
+</div>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+  var element_layer = document.getElementById('layer');
+
+  function closeDaumPostcode() {
+    element_layer.style.display = 'none';
+  }
+
+  function execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        var addr = '', extraAddr = '';
+        if (data.userSelectedType === 'R') {
+          addr = data.roadAddress;
+          if (data.bname && /[동|로|가]$/g.test(data.bname)) extraAddr += data.bname;
+          if (data.buildingName && data.apartment === 'Y') extraAddr += (extraAddr ? ', ' + data.buildingName : data.buildingName);
+          if (extraAddr) extraAddr = ' (' + extraAddr + ')';
+        } else {
+          addr = data.jibunAddress;
+        }
+        document.getElementById('zipcode').value = data.zonecode;
+        document.getElementById('address1').value = addr + extraAddr;
+        document.getElementById('address2').focus();
+        element_layer.style.display = 'none';
+      },
+      width: '100%',
+      height: '100%',
+      maxSuggestItems: 5
+    }).embed(element_layer);
+
+    element_layer.style.display = 'block';
+    initLayerPosition();
+  }
+
+  function initLayerPosition() {
+    const width = 300, height = 400, borderWidth = 5;
+    element_layer.style.width = width + 'px';
+    element_layer.style.height = height + 'px';
+    element_layer.style.border = borderWidth + 'px solid';
+    element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width) / 2 - borderWidth) + 'px';
+    element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height) / 2 - borderWidth) + 'px';
+  }
+</script>
+<!-- 다음 우편번호 API 끝 -->
+</div>
+</body>
+</html>

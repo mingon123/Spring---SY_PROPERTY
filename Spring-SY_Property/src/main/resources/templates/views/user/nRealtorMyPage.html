@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+<head>
+<meta charset="UTF-8">
+<title>마이페이지</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_nrealtor.css}" />
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+  <div class="user-mypage-container">
+    <div class="user-mypage-header">마이페이지</div>
+		<div class="profile-actions">
+			<input type="button" value="회원정보 수정" class="menu-btn" th:onclick="|location.href='@{/user/nRealtorUpdate}'|">
+		    <input type="button" value="비밀번호 변경" class="menu-btn" th:onclick="|location.href='@{/user/changePassword}'|">
+		    <input type="button" value="회원탈퇴" class="menu-btn" th:onclick="|location.href='@{/user/delete}'|">
+		</div>
+    <div class="user-info-box">
+		
+		<ul>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>이름 :</span> 
+		    <span th:text="${user.realtorDetail.name}"></span>
+		  </li>
+		  <li th:if="${not #strings.isEmpty(user.nick_name)}">
+		    <span>별명 :</span> 
+		    <span th:text="${user.nick_name}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>전화번호 :</span> 
+		    <span th:text="${user.realtorDetail.formattedPhone}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>이메일 :</span> 
+		    <span th:text="${user.realtorDetail.email}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>우편번호 :</span> 
+		    <span th:text="${user.realtorDetail.zipcode}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>주소 :</span> 
+		    <span th:text="|${user.realtorDetail.address1 ?: ''} ${user.realtorDetail.address2 ?: ''}|"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>자격증 :</span> 
+		    <span th:text="${user.realtorDetail.certificate_name}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null and user.realtorDetail.valid_date != null}">
+		    <span>자격증 유효기간 :</span> 
+		    <span th:text="${#dates.format(user.realtorDetail.valid_date, 'yyyy-MM-dd')}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null}">
+		    <span>가입일 :</span> 
+		    <span th:text="${#dates.format(user.realtorDetail.reg_date, 'yyyy-MM-dd')}"></span>
+		  </li>
+		  <li th:if="${user?.realtorDetail != null and user.realtorDetail.modi_date != null}">
+		    <span>정보 수정일 :</span> 
+		    <span th:text="${#dates.format(user.realtorDetail.modi_date, 'yyyy-MM-dd')}"></span>
+		  </li>
+		</ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>쉐어하우스 목록</title>
+<link rel="stylesheet" th:href="@{/assets/css/il_house.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>쉐어하우스</h2>
+	
+	<!-- 상세 필터 영역 -->	
+	<div>		
+	</div>
+	
+	<!-- 검색 필터 설정 영역  -->
+	<form action="list" id="area_filter" method="get">
+	  <!-- 시/도 필터 -->
+	  <!-- <label for="sido">시/도</label> -->
+	  <select name="sido" id="sido" onchange="this.form.submit()">
+	    <option value="">전체</option>
+	    <option value="서울" th:selected="${sido == '서울'}">서울</option>
+	    <option value="부산" th:selected="${sido == '부산'}">부산</option>
+	    <option value="대구" th:selected="${sido == '대구'}">대구</option>
+	    <option value="인천" th:selected="${sido == '인천'}">인천</option>
+	    <option value="대전" th:selected="${sido == '대전'}">대전</option>
+	    <option value="울산" th:selected="${sido == '울산'}">울산</option>
+	    <option value="세종" th:selected="${sido == '세종'}">세종</option>
+	    <option value="경기" th:selected="${sido == '경기'}">경기</option>
+	    <option value="충남" th:selected="${sido == '충남'}">충남</option>
+	    <option value="전남" th:selected="${sido == '전남'}">전남</option>
+	    <option value="경북" th:selected="${sido == '경북'}">경북</option>
+	    <option value="경남" th:selected="${sido == '경남'}">경남</option>
+	    <option value="강원" th:selected="${sido == '강원'}">강원</option>
+	  </select>
+	  
+	  <!-- 시/군/구 필터 -->
+	  <!-- <label for="sigungu">시/군/구</label> -->
+	  <select name="sigungu" id="sigungu" onchange="this.form.submit()">
+	    <option value="">전체</option>
+	    <th:block th:if="${sigunguList != null}" th:each="sgg : ${sigunguList}">
+	      <option th:value="${sgg}" th:text="${sgg}" th:selected="${sgg == sigungu}"></option>
+	    </th:block>
+	  </select>
+	  
+	  <!-- 정렬 -->
+	  <select name="order" id="order" th:value="${order}">
+	  	<option value="1" th:selected="${order==1}">최신순</option>
+	  	<option value="2" th:selected="${order==2}">조회순</option>
+	  </select>
+	  <script type="text/javascript">
+	  $(function(){
+	  	$('#order').change(function(){
+	  		location.href=
+	  			'list?sido=[[${sido}]]&sigungu=[[${sigungu}]]'+'&order='+$('#order').val();
+	  	});
+	  });
+	  </script>
+	    
+	</form>
+	
+	<div class="result-display" th:if="${count == 0}">조건에 해당하는 쉐어하우스가 없습니다.</div>
+	
+	<th:block th:if="${count > 0}">	
+		<a th:each="sharehouse : ${list}" th:object="${sharehouse}" 
+			th:href="@{/sharehouse/detail(house_id=*{house_id})}" target="_blank" rel="noopener" class="sharehouse-item-link">
+		<div class="sharehouse-item">
+		    <img th:src="@{/sharehouse/viewSharehouseTitleImage(house_id=*{house_id})}" class="sharehouse-img">
+		    <div class="house-info">
+		      <!--/* 태그 없는 영역 만들 때 th:block 사용 (span 태그로 대체 가능) */-->
+			  <div class="price"
+			       th:with="
+			          pmin = *{price_min},
+			          pmax = *{price_max},
+			          dmin = *{deposit_min},
+			          dmax = *{deposit_max},
+			          dpmin = ${#numbers.formatDecimal(pmin, 0, (pmin % 1 == 0 ? 0 : 1))},
+			          dpmax = ${#numbers.formatDecimal(pmax, 0, (pmax % 1 == 0 ? 0 : 1))}"
+			       th:text="'월' + ${dpmin} + '-' + ${dpmax} + ' / 보' + (${dmin} == ${dmax} ? ${dmin} : ${dmin} + '-' + ${dmax})">
+			  </div>
+		      <div class="title" th:text="*{name}"></div>
+		      <div class="position" th:text="*{sido}+' '+*{sigungu}+' '+*{dong}"></div>
+			  <div class="summary">
+				  <span th:with="
+				        min = *{fee_min}, 
+				        max = *{fee_max},
+				        minStr = (${#numbers.formatDecimal(min, 0, 1)} == '-1' ? '1/n' : ${#numbers.formatDecimal(min, 0, (min % 1 == 0 ? 0 : 1))}),
+				        maxStr = ${#numbers.formatDecimal(max, 0, (max % 1 == 0 ? 0 : 1))}"
+				    th:text="'관리비 ' + ((${min} == ${max}) ? (${minStr}==0 ? '없음' : ${minStr}) : ${minStr} + ' ~ ' + ${maxStr}) + ' | '">
+				    
+				  </span>
+				  <!-- th:text="(*{stay_min} / 30) + '개월~ | '" -->
+				  <span th:if="*{stay_min} != null and *{stay_min} > 0" 
+				  								th:text="*{#numbers.formatDecimal(stay_min/30,0,0)} + '개월~ | '"></span>
+				  <span th:switch="*{gender_type_cd}">
+				    <span th:case="'GENDR00001'">성별무관</span>
+				    <span th:case="'GENDR00002'">남성전용</span>
+				    <span th:case="'GENDR00003'">여성전용</span>
+				    <span th:case="'GENDR00004'">남녀분리</span>
+				    <span th:case="*">기타</span> <!-- 예외 처리 -->
+				  </span>
+			  </div>	      
+		    </div>
+	 	</div> 
+	 	</a>
+	<div class="align-center" th:utext="${page}"></div>
+	</th:block>
+	
+</div>	
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>FAQ 상세</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>FAQ 상세</h2>
+	<div class="notice-box">
+	<table class="striped-table">
+		<tr>
+			<th>Q</th>
+			<td>[[${faq.title}]]</td>
+		</tr>
+		<tr>
+			<th>A</th>
+			<td>[[${faq.content}]]</td>
+		</tr>
+		<tr>
+			<th>작성일</th>
+			<td>[[${faq.reg_date}]]</td>
+		</tr>         	
+	</table>
+	</div>
+	<div class="align-right">
+		<!--  <th:block sec:authorize="isAuthenticated()" th:if="${#authentication.principal.memberVO.mem_num==board.mem_num}"> -->
+		<div class="button-area">
+			<input type="button" value="목록" class="btn-register" onclick="location.href='list'">
+			<input type="button" value="수정" class="btn-register" th:onclick="|location.href='update?faq_num=${faq.faq_num}'|">
+			<input type="button" value="삭제" class="btn-register" id="delete_btn">
+		</div>
+			<script type="text/javascript">
+				const delete_btn = document.getElementById('delete_btn');
+				delete_btn.onclick=function(){
+					let choice = confirm('삭제하시겠습니까?');
+					if(choice){
+						location.replace('delete?faq_num=[[${faq.faq_num}]]');
+					}
+				};
+			</script> 	
+		</th:block>	
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="kr.spring.user.dao.RealtorDetailMapper">
+
+	<!-- 회원가입 -->
+	<insert id="insertRealtorDetail" parameterType="realtorDetailVO">
+	  INSERT INTO realtor_detail (
+	    realtor_num,
+	    name,
+	    phone,
+	    email,
+	    zipcode,
+	    address1,
+	    address2,
+	    certificate,
+	    certificate_name,
+	    reg_date) 
+	  VALUES (
+	    #{realtor_num},
+	    #{name},
+	    #{phone},
+	    #{email},
+	    #{zipcode},
+	    #{address1},
+	    #{address2},
+	    #{certificate},
+	    #{certificate_name},
+	    SYSDATE)
+	</insert>
+
+	<!-- 중개사정보수정 -->
+	<update id="updateRealtorDetail" parameterType="realtorDetailVO">
+		UPDATE realtor_detail
+		SET
+			name=#{name},
+			phone=#{phone},
+			email=#{email},
+			zipcode=#{zipcode},
+			address1=#{address1},
+			address2=#{address2},
+			modi_date=SYSDATE
+		WHERE realtor_num=#{realtor_num}
+	</update>
+
+	
+</mapper>
+
+
+
+
+
+

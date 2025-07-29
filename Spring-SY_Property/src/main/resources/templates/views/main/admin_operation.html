@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_admin}">
+<head>
+<meta charset="UTF-8">
+<title>관리자 메인</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_admin.css}">
+
+</head>
+<body>
+<div layout:fragment="content" class="admin-operation-wrapper">
+    <div class="admin-operation-rows">
+    	<div class="admin-operation-row">
+	      	<a th:href="@{/admin/notice/list}" class="menu-box">
+	        	<img th:src="@{/assets/images/admin_user.png}" alt="공지사항 관리">
+	        	<span class="menu-label">공지사항 관리</span>
+	      	</a>
+	      	<a th:href="@{/admin/policy/list}" class="menu-box">
+	        	<img th:src="@{/assets/images/admin_agent.png}" alt="운영정책 관리">
+	        	<span class="menu-label">운영정책 관리</span>
+	      	</a>
+	    </div>
+	    <div class="admin-operation-row">
+	      	<a th:href="@{/admin/faq/list}" class="menu-box">
+		        <img th:src="@{/assets/images/admin_info.png}" alt="FAQ 관리">
+		        <span class="menu-label">FAQ 관리</span>
+	      	</a>
+	      	<a th:href="@{/admin/tip/list}" class="menu-box">
+		        <img th:src="@{/assets/images/admin_info.png}" alt="TIP 관리">
+		        <span class="menu-label">TIP 관리</span>
+	      	</a>
+	      	<a th:href="@{/admin/news/list}" class="menu-box">
+		        <img th:src="@{/assets/images/admin_stats.png}" alt="뉴스 관리">
+		        <span class="menu-label">뉴스 관리</span>
+	      	</a>
+		</div>
+    </div>
+</div>
+</body>
+</html>

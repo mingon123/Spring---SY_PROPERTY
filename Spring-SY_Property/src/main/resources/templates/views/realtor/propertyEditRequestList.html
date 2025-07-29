@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>매물 수정 요청 목록</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.realtorlist.css}" />
+</head>
+
+<body>
+<div layout:fragment="content" class="page-main">
+  <div class="user-mypage-container">
+    <div class="rplist-header">매물 수정 요청 목록</div>
+
+    <div class="rplist-table-box">
+      <table class="rplist-table">
+        <thead>
+          <tr>
+			<th>요청일</th>
+            <th>매물 번호</th>
+            <th>주소</th>
+            <th>요청 사유</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="req : ${editRequests}">
+			<td th:text="${req.requestDate}"></td>
+			<td th:text="${req.roomNumber}"></td>
+			<td th:text="${req.address}"></td> 
+            <td th:text="${req.reason}"></td>
+            <td th:text="${req.status}"></td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(editRequests)}">
+            <td colspan="4" style="text-align:center;">요청 내역이 없습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+	
+	<div class="rplist-paging" th:utext="${page}"></div>
+
+    <div class="rplist-actions">
+      <a th:href="@{/realtor/realtorPropertyList}" class="rplist-btn rplist-btn-cancel">← 목록으로 돌아가기</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+  <meta charset="UTF-8">
+  <title>메인</title>
+  <link rel="stylesheet" th:href="@{/assets/css/mg_nrealtor.css}">
+</head>
+<body>
+<div layout:fragment="content" class="nrealtor-guide">
+	<div class="guide-text">
+		<p>회원정보 작성 및 자격증을 등록해야 글을 작성할 수 있습니다.</p>
+		<p>등급 심사는 2~3일 소요됩니다.</p>
+	</div>
+
+	<div class="guide-action">
+		<a th:href="@{/user/nRealtorMyPage}" class="menu-box">
+		    <img th:src="@{/assets/images/admin_info.png}" alt="회원정보 작성">
+		    <span class="menu-label">회원정보 작성</span>
+		</a>
+	</div>
+</div>
+</body>
+</html>

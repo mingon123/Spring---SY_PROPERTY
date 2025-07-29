@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<title>네이버 지도 테스트</title>
+<link rel="stylesheet" th:href="@{/assets/css/jw_map.css}" type="text/css">
+</head>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=zeq1aw9idd&submodules=drawing&callback=initMap"></script>
+<script type="text/javascript">
+//전역 선언
+var map; 
+var drawingManager;
+
+function initMap() {
+    // naver 객체가 확실히 로드됐는지 체크
+    if (typeof naver !== 'undefined' && naver.maps) {
+    	var locationBtnHtml = '<a href="#" class="btn_mylct"><span class="spr_trff spr_ico_mylct">NAVER 그린팩토리</span></a>';
+
+    	var customControl = new naver.maps.CustomControl(locationBtnHtml, {
+    	    position: naver.maps.Position.TOP_LEFT
+    	});
+    	
+    	var cadastralLayer = new naver.maps.CadastralLayer();
+    	var streetLayer = new naver.maps.StreetLayer();
+    	var bicycleLayer = new naver.maps.BicycleLayer();
+    	var trafficLayer = new naver.maps.TrafficLayer();
+    	
+    	var mapOptions = {
+    			center: new naver.maps.LatLng(37.3595704, 127.105399), //지도의 초기 중심 좌표
+    		    zoomControl: false, //줌 컨트롤 표시 여부
+    		    minZoom:10, //지도의 최소 줌 레벨
+    		    maxZoom:18, //지도의 최대 줌 레벨
+    		    zoom:13, //지도의 초기 줌 레벨
+    		    disableKineticPan:true, //관성 드래깅 끄기
+    		    tileTransition: true //타일 fade-in 효과 켜기
+    		};
+    	map = new naver.maps.Map('map', mapOptions);
+    	
+    	naver.maps.Event.once(map, 'init', function () {
+    		 setupDistanceMeasuring(map);
+    	});
+    	
+    } else {
+      console.error('naver 객체가 아직 로드되지 않았습니다.');
+    }
+  }
+</script>
+<script type="text/javascript" th:src="@{/assets/js/customMap.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/measureDistance.js}"></script>
+<body>
+<div id="map" style="width:100%;height:700px;position:relative;"></div>
+
+<div id="custom-zoom-controls">
+	<button id="zoom-in">+</button>
+	<button id="zoom-out">−</button>
+</div>
+<div id="custom-mapType-select">
+	<button id="map-type-select">지도</button>
+</div>
+<div id="custom-mapType-controls" style="display: none;">
+	<button id="map-type-normal">일반</button>
+	<button id="map-type-satellite">위성</button>
+	<button id="map-type-hybrid">혼합</button>
+	<button id="map-type-terrain">지형도</button>
+</div>
+<div id="custom-draw-line">
+	<button id="measureBtn">거리재기</button>
+	<button id="cancelMeasureBtn" style="display:none;">취소</button>
+</div>
+</body>
+</html>

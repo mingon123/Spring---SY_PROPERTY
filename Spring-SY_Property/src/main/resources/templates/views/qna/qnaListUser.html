@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>1:1 문의 내역</title>
+    <link rel="stylesheet" href="/assets/css/he.css"/>  
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+<h2>1:1 문의 내역</h2>
+<hr>
+<div class="result-display" th:if="${count == 0}">표시할 문의가 없습니다.</div>
+<th:block th:if="${count > 0}">
+<div class="notice-box">
+    <table class="striped-table">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>문의유형</th>
+                <th>제목</th>
+                <th>등록일</th>
+                <th>답변상태</th>
+            </tr>
+        </thead>
+        <tbody id="qna-tbody">
+		    <th:block th:each="qna, stat : ${list}">
+		        <tr class="notice-row" th:data-id="${qna.qna_num}" style="cursor:pointer;">
+		            <td th:text="${count - stat.index}"></td>
+		            <td th:text="${qna.category}"></td> 
+		            <td th:text="${qna.title}"></td>
+		            <td th:text="${qna.reg_date}"></td>
+		            <td th:text="${qna.answer_status}"></td> 
+		        </tr>
+		        <tr class="detail-row" style="display:none;">
+		            <td colspan="5"><div class="detail-content">불러오는 중...</div></td> 
+		        </tr>
+		    </th:block>
+		</tbody>
+    </table>
+    </div>
+</th:block>
+<div class="button-area">
+		<input type="button" class="btn-register" value="문의 작성" onclick="location.href='write'">
+	</div>
+<script src="/assets/js/jquery-3.7.1.min.js"></script> 
+<script src="/assets/js/qnaUser.js"></script>
+
+</div>
+</body>
+</html>

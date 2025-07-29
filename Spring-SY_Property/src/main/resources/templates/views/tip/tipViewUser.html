@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>TIP 상세</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+	<!-- 제목 -->
+	<div class="tip-title">[[${tip.title}]]</div>
+
+	<!-- 작성일 -->
+	<div class="tip-regdate">[[${tip.reg_date}]]</div><hr style="margin-bottom: 20px;" />
+
+	<!-- 이미지 -->
+	<div class="tip-image"
+	     th:if="${tip != null and not #strings.isEmpty(tip.photo_name) &&
+	              (#strings.endsWith(tip.photo_name,'.jpg') ||
+	               #strings.endsWith(tip.photo_name,'.JPG') ||
+	               #strings.endsWith(tip.photo_name,'.jpeg') ||
+	               #strings.endsWith(tip.photo_name,'.JPEG') ||
+	               #strings.endsWith(tip.photo_name,'.gif') ||
+	               #strings.endsWith(tip.photo_name,'.GIF') ||
+	               #strings.endsWith(tip.photo_name,'.png') ||
+	               #strings.endsWith(tip.photo_name,'.PNG'))}">
+	 	<img th:src="@{/assets/upload/{photo_name}(photo_name=${tip.photo_name})}"
+     style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+            
+	</div>
+	
+	<!-- 내용 -->
+	<div class="tip-content">[[${tip.content}]]</div>
+	
+	<div class="button-area">
+		<input type="button" class="btn-register" value="목록" onclick="location.href='list'">
+	</div>
+</div>
+</body>
+</html>

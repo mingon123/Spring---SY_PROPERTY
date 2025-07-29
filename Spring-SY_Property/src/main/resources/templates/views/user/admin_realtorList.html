@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_admin}">
+<head>
+<meta charset="UTF-8">
+<title>회원관리</title>
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript">
+	$(function(){
+		// 스타일용 토글
+		$('.authority-button input[type="checkbox"]').on('change', function() {
+			$(this).closest('.authority-button').toggleClass('selected', $(this).is(':checked'));
+		});
+	
+		$('.authority-button input[type="checkbox"]:checked').each(function() {
+			$(this).closest('.authority-button').addClass('selected');
+		});
+	});
+</script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>중개사목록(관리자용)</h2>
+	<form action="admin_realtorList" id="search_form" method="get">
+		<ul class="search">
+			<li class="filter-authority">
+				<div class="authority-buttons">
+				  	<div class="authority-row" th:each="row : ${authorityRows}">
+				    	<label class="authority-button" th:each="role : ${row}">
+				      		<input type="checkbox" name="authority" th:value="${role.value}"
+				             	th:checked="${authority != null and #lists.contains(authority, role.value)}">
+				      		<span th:text="${role.label}">권한</span>
+				    	</label>
+				  	</div>
+				</div>
+      		</li>
+			<li class="filter-search">
+				<select name="keyfield">
+					<option value="1" th:selected="${keyfield=='1'}">ID(별명)</option>
+					<option value="2" th:selected="${keyfield=='2'}">이름</option>
+					<option value="3" th:selected="${keyfield=='3'}">이메일</option>
+					<option value="4" th:selected="${keyfield=='4'}">전화번호</option>
+					<option value="5" th:selected="${keyfield=='5'}">전체</option>
+				</select>
+				<input type="search" name="keyword" id="keyword" th:value="${keyword}">
+				<input type="submit" value="찾기">
+				<input type="button" value="초기화" onclick="location.href='admin_realtorList'">
+			</li>
+		</ul>
+	</form>
+	<div class="result-display" th:if="${count==0}">표시할 회원정보가 없습니다.</div>
+	<th:block th:if="${count > 0}">
+		<table class="striped-table">
+			<tr>
+				<th>아이디(별명)</th>
+				<th>이름</th>
+				<th>전화번호</th>
+				<th>이메일</th>
+				<th>가입일</th>
+				<th>권한</th>
+			</tr>
+			<tr th:each="user : ${list}">
+				<td>
+					<th:block th:if="${user.authority == 'ROLE_INACTIVE'}">[[${user.id}]]([[${user.nick_name}]])</th:block>
+					<th:block th:if="${user.authority != 'ROLE_INACTIVE'}"><a th:href="@{/user/admin_realtorUpdate(user_num=${user.user_num})}">[[${user.id}]]([[${user.nick_name}]])</a></th:block>
+				</td>
+				<td th:text="${user.realtorDetail?.name}">이름</td>
+				<td th:text="${user.realtorDetail?.formattedPhone}">전화번호</td>
+				<td th:text="${user.realtorDetail?.email}">이메일</td>
+				<td th:text="${user.realtorDetail?.reg_date}">가입일</td>
+				<td>
+					<th:block th:if="${user.authority == 'ROLE_REALTOR'}">중개사</th:block>
+					<th:block th:if="${user.authority == 'ROLE_N_REALTOR'}">미인증중개사</th:block>
+					<th:block th:if="${user.authority == 'ROLE_SUSPENDED'}">정지</th:block>
+					<th:block th:if="${user.authority == 'ROLE_INACTIVE'}">탈퇴</th:block>
+				</td>
+			</tr>
+		</table>
+		<div class="align-center" th:utext="${page}"></div>
+	</th:block>
+</div>
+</body>
+</html>

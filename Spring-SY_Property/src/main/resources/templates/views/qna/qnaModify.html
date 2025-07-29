@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+    <meta charset="UTF-8">
+    <title>1:1문의 수정</title>
+    <link rel="stylesheet" th:href="@{/assets/css/he.css}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+<h2>1:1 문의 수정</h2><hr>
+
+<form th:action="@{/qna/update}" method="post" th:object="${qnaVO}" enctype="multipart/form-data">
+    <!-- 수정할 글 번호 -->
+    <input type="hidden" th:field="*{qna_num}" />
+
+    <table class="striped-table">
+        <tr>
+            <th><label for="category">문의유형</label></th>
+            <td>
+                <select th:field="*{category}" id="category" name="category" class="form-control">
+                    <option value="">-- 선택 --</option>
+                    <option th:value="'서비스 이용문의'" th:selected="${qnaVO.category == '서비스 이용문의'}">서비스 이용문의</option>
+                    <option th:value="'허위매물 신고'" th:selected="${qnaVO.category == '허위매물 신고'}">허위매물 신고</option>
+                    <option th:value="'단지정보 문의'" th:selected="${qnaVO.category == '단지정보 문의'}">단지정보 문의</option>
+                    <option th:value="'기타문의'" th:selected="${qnaVO.category == '기타문의'}">기타문의</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th><label for="title">제목</label></th>
+            <td><input type="text" th:field="*{title}" id="title" class="form-control" /></td>
+        </tr>
+
+        <tr>
+            <th><label for="content">내용</label></th>
+            <td><textarea th:field="*{content}" id="content" rows="8" class="form-control"></textarea></td>
+        </tr>
+
+        <tr>
+            <th><label for="upload">첨부 파일</label></th>
+            <td>
+                <input type="file" th:field="*{upload}" id="upload" name="upload" class="form-control" />
+                <div th:if="${qnaVO.photo_name != null}" style="margin-top: 10px;">
+                    <p>현재 첨부파일: <span th:text="${qnaVO.photo_name}"></span></p>
+                    <img th:src="@{/assets/upload/{photo_name}(photo_name=${qnaVO.photo_name})}"
+                         style="max-width:300px; display:block; margin-top:10px;" />
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="button-area">
+        <button type="submit" class="btn-register" value="수정">수정 완료</button>
+        <input type="button" class="btn-register" value="목록" onclick="location.href='list'">
+    </div>
+</form>
+
+</div>
+</body>
+</html>

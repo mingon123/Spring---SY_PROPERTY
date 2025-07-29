@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="kr.spring.property.dao.PropertyMapper">
+	<!--  
+	<resultMap type="PropertyVO" id="propertyMap">
+	</resultMap>
+	-->
+	
+	<!-- sql 태그와 include 태그를 이용해 SQL문 재사용 -->
+	<!-- 전체/검색 목록 -->
+	<select id="getPropertiesList" resultType="kr.spring.property.vo.PropertyVO">
+		SELECT
+			property_id,
+			room_number,
+			realtor_num,
+			<![CDATA[
+			REPLACE(REPLACE(title,'<','&lt;'),'>','&gt;') title,
+			]]>
+			address,
+			room_type,
+			price,
+			area_m2,
+			bed_count,
+			bathroom_count,
+			floor_info,
+			building_floors,
+			parking,
+			maintenance_cost,
+			move_in_date,
+			approval_date,
+			complex_name,
+			household_num,
+			exclusive_area_m2,
+			supply_area_m2,
+			hashtags,
+			options,
+			latitude,
+			longitude,
+			category,
+			p_hit,
+			p_reg_date,
+			p_modi_date
+		FROM property WHERE keyp_state = 0
+	</select>
+	
+	<select id="getPropertiesListByCategory" resultType="kr.spring.property.vo.PropertyVO">
+		SELECT
+			p.property_id,
+			p.room_number,
+			p.realtor_num,
+			<![CDATA[
+			REPLACE(REPLACE(p.title,'<','&lt;'),'>','&gt;') title,
+			]]>
+			p.address,
+			p.room_type,
+			p.price,
+			p.area_m2,
+			p.bed_count,
+			p.bathroom_count,
+			p.floor_info,
+			p.building_floors,
+			p.parking,
+			p.maintenance_cost,
+			p.move_in_date,
+			p.approval_date,
+			p.complex_name,
+			p.household_num,
+			p.exclusive_area_m2,
+			p.supply_area_m2,
+			p.hashtags,
+			p.options,
+			p.latitude,
+			p.longitude,
+			p.category,
+			p.p_hit,
+			p.p_reg_date,
+			p.p_modi_date,
+			
+			<if test="user_num != null">
+				CASE WHEN f.property_id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite
+			</if>
+			<if test="user_num == null">
+				0 AS is_favorite
+			</if>
+		FROM property p
+			<if test="user_num != null">
+				LEFT JOIN property_fav f ON p.property_id = f.property_id
+				AND f.user_num = #{user_num}
+			</if>
+		WHERE keyp_state = 0 AND category=#{category}
+	</select>
+	
+	<insert id="insertProperty" parameterType="kr.spring.property.vo.PropertyVO">
+	  	INSERT INTO property (
+		    realtor_num, room_number, title, address, room_type, price, area_m2,
+		    bed_count, bathroom_count, floor_info, building_floors, parking,
+		    maintenance_cost, move_in_date, approval_date, complex_name,
+		    household_num, exclusive_area_m2, supply_area_m2, hashtags, options,
+		    latitude, longitude, category, status, p_reg_date, keyp_state
+		  )
+		  VALUES (
+		    #{realtor_num},#{room_number}, #{title}, #{address}, #{room_type}, #{price}, #{area_m2},
+		    #{bed_count}, #{bathroom_count}, #{floor_info}, #{building_floors}, #{parking},
+		    #{maintenance_cost}, #{move_in_date}, #{approval_date}, #{complex_name},
+		    #{household_num}, #{exclusive_area_m2}, #{supply_area_m2}, #{hashtags}, #{options},
+		    #{latitude}, #{longitude}, #{category}, '대기', SYSDATE, 0
+		  )
+	</insert>
+	
+	<select id="countPropertyByDate" resultType="int">
+	  	SELECT COUNT(*) 
+	  	FROM property 
+	  	WHERE TO_CHAR(p_reg_date, 'YYYYMMDD') = #{date}
+	</select>
+
+	<select id="getPropertyRealtor" parameterType="long" resultType="kr.spring.property.vo.PropertyVO">
+	  	SELECT * FROM property
+	  	WHERE realtor_num = #{realtor_num}
+	</select>
+	
+	<select id="getFilterProperty" resultType="kr.spring.property.vo.PropertyVO" parameterType="map">
+	  	SELECT * FROM property
+	  	<where>
+	    	<if test="category != null and category != ''">
+	      	AND category = #{category}
+	    	</if>
+	    	<if test="address != null and address != ''">
+	      	AND address LIKE '%' || #{address} || '%'
+	    	</if>
+	  	</where>
+	</select>
+
+	<select id="selectPropertyID" parameterType="long" resultType="kr.spring.property.vo.PropertyVO">
+	  	SELECT * FROM property WHERE property_id = #{propertyId}
+	</select>
+	
+	<!-- 관리자 기능 -->
+	<select id="selectList" parameterType="map" resultType="kr.spring.property.vo.PropertyVO">
+		  SELECT * 
+		  FROM (
+		    SELECT a.*, ROWNUM rnum 
+		    FROM (
+		      SELECT * FROM property 
+		      ORDER BY property_id DESC
+		    ) a)
+		<![CDATA[
+			WHERE rnum >= #{start} AND rnum <= #{end}
+		]]>
+	</select>
+	
+	<update id="updateProperty" parameterType="kr.spring.property.vo.PropertyVO">
+	  UPDATE property SET
+	    title = #{title},
+	    address = #{address},
+	    category = #{category},
+	    room_type = #{room_type},
+	    price = #{price},
+	    area_m2 = #{area_m2},
+	    floor_info = #{floor_info},
+	    building_floors = #{building_floors},
+	    parking = #{parking},
+	    status = #{status},
+	    p_modi_date = SYSDATE
+	  WHERE property_id = #{property_id}
+	</update>
+	<select id="getPropertyCountRealtor" resultType="int">
+      SELECT COUNT(*) 
+      FROM property 
+      WHERE realtor_num = #{realtorNum}
+    </select>
+   <select id="getPropertyRealtorPage" resultType="kr.spring.property.vo.PropertyVO">
+      SELECT * 
+      FROM (
+      SELECT a.*, ROWNUM rnum 
+      FROM (
+        SELECT * FROM property
+        WHERE realtor_num = #{realtorNum}
+        ORDER BY property_id DESC
+      ) a
+        WHERE ROWNUM &lt;= #{end}
+      )
+      WHERE rnum &gt;= #{start}
+   </select>
+   <select id="searchByCategory" resultType="PropertyVO">
+       SELECT * FROM property
+       WHERE category = #{category}
+       AND status = 0
+   </select>
+   
+   <select id="selectFavPropertyId" resultType="long">
+       SELECT property_id
+       FROM property_fav
+       WHERE user_num = #{userNum}
+   </select>
+   
+   <select id="selectFavPropertyList" resultType="kr.spring.property.vo.PropertyVO">
+    SELECT p.*
+    FROM property p
+    JOIN property_fav f ON p.property_id = f.property_id
+    WHERE f.user_num = #{userNum}
+   </select>
+
+   <select id="getFavPropertyList" resultType="kr.spring.property.vo.PropertyVO">
+     SELECT p.*
+     FROM property p
+     JOIN property_fav f ON p.property_id = f.property_id
+     WHERE f.user_num = #{userNum}
+     ORDER BY f.property_id DESC
+   </select>
+
+
+   <!-- 페이징된 좋아요 매물 -->
+   <select id="getFavPropertyListPaging" resultType="kr.spring.property.vo.PropertyVO">
+    <![CDATA[
+      SELECT * FROM (
+       SELECT a.*, ROWNUM rnum FROM (
+         SELECT p.*
+         FROM property p
+         JOIN property_fav f ON p.property_id = f.property_id
+         WHERE f.user_num = #{userNum}
+         ORDER BY f.property_id DESC
+       ) a
+       WHERE ROWNUM <= #{end}
+     ) 
+     WHERE rnum >= #{start}
+    ]]> 
+    </select>
+    <select id="getFavCount" resultType="int">
+      SELECT COUNT(*)
+      FROM property_fav
+      WHERE user_num = #{userNum}
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

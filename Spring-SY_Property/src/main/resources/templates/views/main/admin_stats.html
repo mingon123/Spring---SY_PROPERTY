@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_admin}">
+<head>
+<meta charset="UTF-8">
+<title>관리자 메인</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_admin.css}">
+</head>
+<body>
+<div layout:fragment="content" class="admin-main">
+    <div class="menu-grid">
+      	<a th:href="@{/user/admin_list}" class="menu-box">
+        	<img th:src="@{/assets/images/admin_user.png}" alt="사용자 관리">
+        	<span class="menu-label">사용자 관리</span>
+      	</a>
+      	<a th:href="@{/user/admin_realtorList}" class="menu-box">
+        	<img th:src="@{/assets/images/admin_agent.png}" alt="중개사 관리">
+        	<span class="menu-label">중개사 관리</span>
+      	</a>
+      	<a th:href="@{/house/manage}" class="menu-box">
+	        <img th:src="@{/assets/images/admin_house.png}" alt="매물 관리">
+	        <span class="menu-label">매물 관리</span>
+      	</a>
+      	<a th:href="@{/sale/info}" class="menu-box">
+	        <img th:src="@{/assets/images/admin_info.png}" alt="분양 정보 관리">
+	        <span class="menu-label">분양 정보 관리</span>
+      	</a>
+      	<a th:href="@{/main/admin_operation}" class="menu-box">
+	        <img th:src="@{/assets/images/admin_pencil.png}" alt="운영 관리">
+	        <span class="menu-label">운영 관리</span>
+	    </a>
+      	<a th:href="@{/main/admin_stats}" class="menu-box">
+	        <img th:src="@{/assets/images/admin_stats.png}" alt="통계 관리">
+	        <span class="menu-label">통계 관리</span>
+      	</a>
+      	<a th:href="@{/report/manage}" class="menu-box">
+	        <img th:src="@{/assets/images/admin_report.png}" alt="신고 관리">
+	        <span class="menu-label">신고 관리</span>
+      	</a>
+      	<a th:href="@{/qna/list}" class="menu-box">
+	        <img th:src="@{/assets/images/admin_info.png}" alt="1:1문의 관리">
+	        <span class="menu-label">1:1문의 관리</span>
+      	</a>
+    </div>
+</div>
+</body>
+</html>

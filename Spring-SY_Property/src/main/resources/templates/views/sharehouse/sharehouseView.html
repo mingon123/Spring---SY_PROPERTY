@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>쉐어하우스 상세</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" th:href="@{/assets/css/il_house.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=zeq1aw9idd"></script>
+</head>
+<body>
+
+<div layout:fragment="content" class="page-main">
+	<!-- Swiper 시작 -->
+	<div class="swiper houseSwiper">
+	  <div class="swiper-wrapper">
+	    <div class="swiper-slide" th:each="img : ${houseImages}">
+	      <img th:src="@{/sharehouse/viewSharehouseImage(house_id=${img.house_id}, sh_img_type=${img.sh_img_type}, sh_img_seq=${img.sh_img_seq})}" class="sharehouse-img">
+	    </div>
+	  </div>
+	  <!-- 페이지네이션 & 네비게이션 -->
+	  <div class="swiper-pagination"></div>
+	  <div class="swiper-button-prev"></div>
+	  <div class="swiper-button-next"></div>
+	</div>
+	<!-- Swiper 끝 -->	
+	
+	<!-- 상단에서 먼저 글로벌 변수 바인딩 -->
+	<div th:object="${sharehouse}" class="house-detail" 
+	th:with="
+		   pmin = *{price_min},
+		   pmax = *{price_max},
+		   dmin = *{deposit_min},
+		   dmax = *{deposit_max},
+		   dpmin = ${#numbers.formatDecimal(pmin, 0, (pmin % 1 == 0 ? 0 : 1))},
+		   dpmax = ${#numbers.formatDecimal(pmax, 0, (pmax % 1 == 0 ? 0 : 1))},
+		   fmin = *{fee_min},
+		   fmax = *{fee_max},
+		   minStr = (${#numbers.formatDecimal(fmin, 0, 1)} == '-1' ? '1/n' : ${#numbers.formatDecimal(fmin, 0, (fmin % 1 == 0 ? 0 : 1))}),
+		   maxStr = ${#numbers.formatDecimal(fmax, 0, (fmax % 1 == 0 ? 0 : 1))},
+           rawStayMin = *{stay_min},
+           rawStayMaxMin = *{stay_maxMin},
+           rawStayMaxMax = *{stay_maxMax},
+           stayMinMonth = ${rawStayMin != null ? rawStayMin / 30.0 : null},
+           stayMaxMinMonth = ${rawStayMaxMin != null ? rawStayMaxMin / 30.0 : null},
+           stayMaxMaxMonth = ${rawStayMaxMax != null ? rawStayMaxMax / 30.0 : null}   
+		   ">
+		<section class="house-title-info">
+		   <div class="house-title">
+			   <p th:text="'보증금 ' + (${dmin} == ${dmax} ? ${dmin} : ${dmin} + '-' + ${dmax}) + '만원'"></p>
+			   <h2 th:text="'월세 ' + ${dpmin} + '-' + ${dpmax} + '만원'"></h2>
+			   <p>[[*{name}]]</p>
+		   </div>		   
+		</section>	
+		
+		<!-- 탭 메뉴 -->
+		<nav class="tabs">
+		  <button class="tab active" data-tab="price" onclick="scrollToSection('price')">가격정보</button>
+		  <button class="tab" data-tab="info" onclick="scrollToSection('info')">이용정보</button>
+		  <button class="tab" data-tab="building" onclick="scrollToSection('building')">건물정보</button>
+		  <button class="tab" data-tab="rooms" onclick="scrollToSection('rooms')">각 방 정보</button>
+		  <button class="tab" data-tab="intro" onclick="scrollToSection('intro')">소개</button>
+		  <button class="tab" data-tab="location" onclick="scrollToSection('location')">위치</button>
+		</nav>
+
+		
+		<section class="section-box" id="price">
+		  <h3>가격정보</h3>
+		  <div class="info-item">
+			  <span class="info-label">임대유형</span>
+			  <span class="info-value">월세</span>
+		  </div>
+		  <div class="info-item">
+			  <span class="info-label">보증금</span>
+			  <span class="info-value" 
+			  	th:text="(${dmin} == ${dmax} ? ${dmin} : ${dmin} + '-' + ${dmax}) + '만원'"></span>
+		  </div>
+		  <div class="info-item">
+			  <span class="info-label">월 이용료</span> 
+			  <span class="info-value" 
+			  	th:text="${dpmin} + '-' + ${dpmax} + '만원'"></span>
+		  </div>
+		  <div class="info-item">
+			  <span class="info-label">관리비</span> 
+			  <span class="info-value" 
+			  	th:text="((${fmin} == ${fmax}) ? (${minStr}==0 ? '없음' : ${minStr} + '만원') : ${minStr} + '-' + ${maxStr} + '만원')"></span>
+		  </div>
+		</section>
+		
+		<section class="section-box" id="info">
+		  <h3>이용정보</h3>
+		  <div class="info-item">
+			  <span class="info-label">이용기간</span>
+			  <span class="info-value">
+			  <!-- 제한 없음(TODO: 조건 변수 재확인요망) -->
+<!-- 			  <span th:if="${stayMinMonth != null and stayMaxMinMonth != null and stayMaxMinMonth == 0.0 and stayMaxMaxMonth != null and stayMaxMaxMonth >= 0.0}"
+			        th:text="'제한없음'"></span> -->
+			  <span th:if="${stayMinMonth != null and stayMinMonth == 0.0 and stayMaxMinMonth != null and stayMaxMinMonth == 0.0 and stayMaxMaxMonth != null and stayMaxMaxMonth >= 0.0}"
+			        th:text="'제한없음'"></span>
+			  <!-- 최소만 존재 -->
+			  <span th:if="${stayMinMonth != null and stayMinMonth > 0.0 and (stayMaxMaxMonth == null or stayMaxMinMonth == 0.0)}"
+			        th:text="${#numbers.formatDecimal(stayMinMonth, 0, 0)} + '개월 이상'"></span>
+			  <!-- 최대만 존재 -->
+			  <span th:if="${(stayMinMonth == null or stayMinMonth == 0.0) and stayMaxMaxMonth != null and stayMaxMinMonth != 0.0}"
+			        th:text="${#numbers.formatDecimal(stayMaxMaxMonth, 0, 0)} + '개월 이하'"></span>
+			  <!-- 최소~최대 모두 있는 경우 -->
+			  <span th:if="${stayMinMonth != null and stayMinMonth > 0.0 and stayMaxMaxMonth != null and stayMaxMinMonth != 0.0}"
+			        th:text="${#numbers.formatDecimal(stayMinMonth, 0, 0)} + '개월 ~ ' + ${#numbers.formatDecimal(stayMaxMaxMonth, 0, 0)} + '개월'"></span>
+			  </span>
+		  </div>
+		  <div class="info-item">
+			  <span class="info-label">이용연령</span>			  
+			  <span class="info-value" 
+			  	th:text="(*{enter_age_min} == 0 and *{enter_age_max} == 0) ? '제한없음' : *{enter_age_min} + '세 ~ ' + *{enter_age_max} + '세'"></span>
+		  </div>
+		  <div class="info-item">
+			  <span class="info-label">남녀구분</span>
+			  <span class="info-value" 
+			  	th:switch="*{gender_type_cd}">
+			    <span th:case="'GENDR00001'">성별무관</span>
+			    <span th:case="'GENDR00002'">남성전용</span>
+			    <span th:case="'GENDR00003'">여성전용</span>
+			    <span th:case="'GENDR00004'">남녀분리</span>
+			    <span th:case="*">기타</span> <!-- 예외 처리 -->
+			  </span>			  
+		  </div>
+		</section>		
+		
+		<section class="section-box" id="building">
+		  <h3>건물정보</h3>
+		  <div class="info-item">
+			  <span class="info-label">건물형태</span>
+			  <span class="info-value" th:text="*{structure}"></span>
+		  </div>		
+		  <div class="info-item">
+			  <span class="info-label">층 수</span>
+			  <span class="info-value" th:text="*{floorInfo}"></span>
+		  </div>		
+		  <div class="info-item" th:if="${not #lists.isEmpty(structureImages)}">
+			  <span class="info-label">평면도</span>
+			  <!-- TODO: 평면도 크게 보기 기능 구현요망 -->
+			  <span class="info-value" th:each="floorImg : ${structureImages}">
+			  <img th:src="@{/sharehouse/viewSharehouseImage(house_id=${floorImg.house_id}, sh_img_type=${floorImg.sh_img_type}, sh_img_seq=${floorImg.sh_img_seq})}" class="floor-img">
+			  </span>
+		  </div>		
+		</section>
+		
+		<section class="section-box" id="rooms">
+		  <h3>각 방 정보</h3>
+		  <a th:each="room : ${roomList}" th:object="${room}" 
+			th:href="@{/sharehouse/room_detail(house_id=*{house_id})}" class="room-item-link">
+		  <div class="room-item">		  		  
+		  	  <img th:src="@{/sharehouse/viewSharehouseRoomTitleImage(room_id=*{room_id})}" class="room-img">
+			  <span class="info-value">
+				  <span th:text="*{room_name}" class="room-name"></span><br>
+				  <span th:text="*{capacity}" class="room-capacity"></span><br>
+				  <p th:with="mp=*{monthly_price}, 
+				  			  mpFormatted=${#numbers.formatDecimal(mp, 0, (mp % 1 == 0 ? 0 : 1))}" 
+				  	 th:text="'보' + *{deposit} + '월' + ${mpFormatted}" class="room-price">보증금 월세</p>
+			  </span>			  
+		  </div>
+		  </a>
+		</section>
+		
+		<section class="section-box" id="intro">
+		  <h3>소개</h3>
+		  <div>
+		    <span class="info-title">쉐어하우스 소개</span><br>
+		    <span class="info-value" th:text="*{house_info}"></span>
+		  </div>
+		  <div th:if="*{move_requirements}">
+		    <span class="info-title">입주조건</span><br>
+		    <span class="info-value" th:text="*{move_requirements}"></span>
+		  </div>
+		</section>
+				
+		<section class="section-box" id="location">
+		  <h3>위치</h3>
+		  <div>
+			  <div class="info-value" th:text="*{address}"></div>
+			  <div id="map" class="map-box"></div>
+				<script>
+				var latitude = '[[${sharehouse.latitude}]]';   // 위도
+				var longitude = '[[${sharehouse.longitude}]]'; // 경도
+				var name = '[[${sharehouse.name}]]';     // 쉐어하우스 이름
+				
+				var mapOptions = {
+				    center: new naver.maps.LatLng(latitude, longitude),
+				    zoom: 16
+				};
+				
+				var map = new naver.maps.Map('map', mapOptions);
+				
+				var marker = new naver.maps.Marker({
+				    position: new naver.maps.LatLng(latitude, longitude),
+				    map: map
+				});				
+				
+				</script>			  
+		  </div>
+		</section>
+		
+	</div> <!-- end of class="house-detail" -->
+
+	<!-- Swiper 스크립트 시작 -->
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script>
+	  document.addEventListener("DOMContentLoaded", function () {
+	    const swiper = new Swiper(".houseSwiper", {
+	      loop: true,
+	      pagination: {
+	        el: ".swiper-pagination",
+	        clickable: true
+	      },
+	      navigation: {
+	        nextEl: ".swiper-button-next",
+	        prevEl: ".swiper-button-prev"
+	      }
+	    });
+	  });
+	</script>
+	<!-- Swiper 스크립트 끝 -->
+	
+	<!-- 탭 메뉴 클릭시 디자인 활성 시작 -->
+	<script>
+	  function scrollToSection(id) {
+	    const target = document.getElementById(id);
+	    if (target) {
+	      const top = target.getBoundingClientRect().top + window.pageYOffset - 197;
+	      window.scrollTo({ top, behavior: 'smooth' });
+	    }
+	  }
+	
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const tabs = document.querySelectorAll('.tab');
+	    const sections = document.querySelectorAll('.section-box');
+	
+	    const sectionIdList = Array.from(sections).map(sec => sec.id);
+	
+	    // 스크롤 이벤트로 active 탭 동기화
+	    window.addEventListener('scroll', () => {
+	      let currentSectionId = null;
+	
+	      for (let sec of sections) {
+	        const rect = sec.getBoundingClientRect();
+	        if (rect.top <= 210) { // 스크롤 고정 상단 고려
+	          currentSectionId = sec.id;
+	        }
+	      }
+	
+	      if (currentSectionId) {
+	        tabs.forEach(tab => {
+	          tab.classList.toggle('active', tab.dataset.tab === currentSectionId);
+	        });
+	      }
+	    });
+	  });
+	</script>
+	<!-- 탭 메뉴 클릭시 디자인 활성 끝 -->
+	
+	<!-- 탭 메뉴 클릭시 스크롤 이동 시작 -->
+	<script>
+	  function scrollToSection(id) {
+	    const target = document.getElementById(id);
+	    if (target) {
+	      const top = target.getBoundingClientRect().top + window.pageYOffset - 197; // 고정 영역 높이 고려
+	      window.scrollTo({ top, behavior: 'smooth' });
+	    }
+	  }
+	</script>
+	<!-- 탭 메뉴 클릭시 스크롤 이동 끝 -->
+	
+</div>
+</body>
+</html>

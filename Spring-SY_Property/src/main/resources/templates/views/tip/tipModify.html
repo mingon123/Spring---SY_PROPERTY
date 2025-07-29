@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+    <meta charset="UTF-8">
+    <title>TIP 수정</title>
+    <link rel="stylesheet" th:href="@{/assets/css/he.css}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div layout:fragment="content" class="page-main">
+    <h2>TIP 수정</h2>
+
+    <form th:action="@{/admin/tip/update}" method="post" th:object="${tipVO}" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{tip_num}" id="tip_num"/>
+
+        <table class="striped-table">
+            <tr>
+                <th>제목</th>
+                <td>
+                    <input type="text" th:field="*{title}" placeholder="제목을 입력하세요"
+                           class="form-control" th:errorclass="field-error">
+                    <span th:errors="*{title}" class="error-color"></span>
+                </td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea th:field="*{content}" placeholder="내용을 입력하세요"
+                              class="form-control" rows="10" th:errorclass="field-error"></textarea>
+                    <span th:errors="*{content}" class="error-color"></span>
+                </td>
+            </tr>
+            <tr>
+                <th>사진</th>
+                <td>
+                    <input type="file" name="upload" id="upload">
+                    <th:block th:if="${not #strings.isEmpty(tipVO.photo_name)}">
+                        <div id="file_detail">
+                         <div id="file_detail" style="margin-top:10px;">
+            <th:block th:if="${tipVO != null and not #strings.isEmpty(tipVO.photo_name)}">
+                <img th:src="@{'/assets/upload/' + ${tipVO.photo_name}}" alt="이미지 미리보기"
+                     style="max-width: 200px; border: 1px solid #ddd; margin-top:10px;">
+            </th:block>
+        </div>
+                        </div>
+                    </th:block>
+                </td>
+            </tr>
+        </table>
+
+        <div class="button-area">
+            <input type="button" class="btn-register" value="목록" onclick="location.href='list'">
+            <input type="submit" class="btn-register" value="수정">
+        </div>
+    </form>
+</div>
+
+<script>
+    $(function () {
+        $('#file_del').click(function () {
+            const choice = confirm('삭제하시겠습니까?');
+            if (choice) {
+                $.ajax({
+                    url: 'deleteFile/' + $('#tip_num').val(),
+                    type: 'delete',
+                    dataType: 'json',
+                    success: function (param) {
+                        if (param.result === 'logout') {
+                            alert('로그인 후 사용하세요');
+                        } else if (param.result === 'success') {
+                            $('#file_detail').hide();
+                        } else {
+                            alert('파일 삭제 오류 발생');
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('네트워크 오류 발생');
+                        console.error('Error:', xhr.status, xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

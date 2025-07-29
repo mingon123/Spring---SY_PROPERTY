@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.chat.dao.ChatMapper">
+
+ 
+<!-- chat 메시지 저장 -->
+
+
+  <select id="getChatByRoom" parameterType="long" resultType="kr.spring.chat.vo.ChatMessageVO">
+    SELECT * FROM chat WHERE chatroom_num = #{chatroom_num} ORDER BY chat_date ASC
+  </select>
+  
+  <insert id="insertChat" parameterType="kr.spring.chat.vo.ChatMessageVO">
+    INSERT INTO chat (CHATROOM_NUM, USER_NUM, CHAT_DATE,MESSAGE,READ_CHECK,CHAT_NUM)
+    VALUES (#{chatroom_num}, #{user_num},SYSDATE,#{message},1, chat_num_seq.NEXTVAL)
+  </insert>
+  <!-- 채팅방 존재 여부 조회 -->
+  <select id="selectChatRoom" resultType="kr.spring.chat.vo.ChatRoomVO">
+   SELECT * FROM chatroom 
+   WHERE user_num = #{user_num} AND realtor_user_num = #{realtor_num} AND property_num = #{property_num}
+  </select>
+  
+  <insert id="insertChatRoom" parameterType="kr.spring.chat.vo.ChatRoomVO">
+    <!-- 시퀀스를 먼저 조회해서 chatroom_num에 넣어줌 -->
+    <selectKey keyProperty="chatroom_num" resultType="long" order="BEFORE">
+    SELECT chatroom_seq.NEXTVAL FROM dual
+    </selectKey>
+
+     INSERT INTO chatroom 
+      (CHATROOM_NUM, USER_NUM, REALTOR_USER_NUM, ROOM_DATE, PROPERTY_NUM, CHATROOM_TITLE)
+     VALUES 
+      (#{chatroom_num}, #{user_num}, #{realtor_user_num}, SYSDATE, #{property_num}, #{chatroom_title})
+  </insert>
+
+
+  <select id="getChatroomsByUser" resultType="kr.spring.chat.vo.ChatRoomVO">
+    SELECT * 
+    FROM chatroom
+    WHERE user_num = #{user_num}
+       OR realtor_user_num = #{user_num}
+    ORDER BY room_date DESC
+  </select>
+
+  <select id="getChatroomCountUser" resultType="int">
+   SELECT COUNT(*) FROM chatroom WHERE user_num = #{userNum}
+  </select>
+
+  <select id="getChatroomsUserPage" resultType="kr.spring.chat.vo.ChatRoomVO" parameterType="map">
+    <![CDATA[
+    SELECT * FROM (
+    SELECT a.*, ROWNUM rnum
+    FROM (
+      SELECT * FROM chatroom
+      WHERE user_num = #{userNum}
+      ORDER BY chatroom_num DESC
+     ) a
+     WHERE ROWNUM <= #{end}
+    )
+    WHERE rnum >= #{start}
+    ]]>
+  </select>
+
+
+  <select id="getChatroomCountRealtor" resultType="int">
+   SELECT COUNT(*) FROM chatroom WHERE realtor_user_num = #{realtorNum}
+  </select>
+
+  <select id="getChatroomsRealtorPage" resultType="kr.spring.chat.vo.ChatRoomVO" parameterType="map">
+    <![CDATA[
+    SELECT * FROM (
+    SELECT a.*, ROWNUM rnum
+    FROM (
+      SELECT * FROM chatroom
+      WHERE realtor_user_num = #{realtorNum}
+      ORDER BY chatroom_num DESC
+    ) a
+    WHERE ROWNUM <= #{end}
+   )
+   WHERE rnum >= #{start}
+   ]]>
+  </select>
+
+</mapper>

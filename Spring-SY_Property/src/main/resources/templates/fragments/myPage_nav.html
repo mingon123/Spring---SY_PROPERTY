@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+
+<th:block th:fragment="sidebar">
+  <aside class="mypage-side-bar">
+    <ul>
+	  <!-- 공통 -->
+      <li><a th:href="@{/user/myPage}">마이페이지 홈</a></li>
+      <li><a th:href="@{/user/changePassword}">비밀번호 변경</a></li>
+
+      <!-- 회원 공통 -->
+      <li sec:authorize="hasRole('ROLE_USER')">
+        <a th:href="@{/property/favorite}">관심 매물</a>
+      </li>
+
+      <!-- 중개사 전용 -->
+      <li sec:authorize="hasRole('ROLE_REALTOR')">
+        <a th:href="@{/realtor/signProperty}">매물 등록 신청</a>
+      </li>
+      <li sec:authorize="hasRole('ROLE_REALTOR')">
+        <a th:href="@{/realtor/realtorPropertyList}">내 매물 관리</a>
+      </li>
+
+      <!-- 공통 -->
+      <li><a th:href="@{/chat/list}">대화중인 채팅방</a></li>
+    </ul>
+  </aside>
+</th:block>
+
+</html>

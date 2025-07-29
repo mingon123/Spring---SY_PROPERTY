@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>매물 상세정보</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.realtorlist.css}" />
+</head>
+
+<body>
+<div layout:fragment="content" class="page-main">
+  <div class="user-mypage-container">
+    <div class="rplist-header">매물 상세정보</div>
+    <table class="rplist-table">
+      <tr><th>제목</th><td th:text="${property.title}"></td></tr>
+      <tr><th>주소</th><td th:text="${property.address}"></td></tr>
+      <tr><th>방 종류</th><td th:text="${property.room_type}"></td></tr>
+      <tr><th>가격</th><td th:text="${property.price}"></td></tr>
+      <tr><th>면적</th><td th:text="${property.area_m2} + '㎡'"></td></tr>
+      <tr><th>방 수</th><td th:text="${property.bed_count}"></td></tr>
+      <tr><th>화장실 수</th><td th:text="${property.bathroom_count}"></td></tr>
+      <tr><th>층 정보</th><td th:text="${property.floor_info}"></td></tr>
+      <tr><th>총 층수</th><td th:text="${property.building_floors}"></td></tr>
+      <tr><th>주차 여부</th><td th:text="${property.parking}"></td></tr>
+      <tr><th>입주일</th><td th:text="${property.move_in_date}"></td></tr>
+      <tr><th>승인일</th><td th:text="${property.approval_date}"></td></tr>
+      <tr><th>단지명</th><td th:text="${property.complex_name}"></td></tr>
+      <tr><th>세대수</th><td th:text="${property.household_num}"></td></tr>
+      <tr><th>전용면적</th><td th:text="${property.exclusive_area_m2} + '㎡'"></td></tr>
+      <tr><th>공급면적</th><td th:text="${property.supply_area_m2} + '㎡'"></td></tr>
+      <tr><th>해시태그</th><td th:text="${property.hashtags}"></td></tr>
+      <tr><th>옵션</th><td th:text="${property.options}"></td></tr>
+      <tr><th>카테고리</th><td th:text="${property.category}"></td></tr>
+      <tr><th>상태</th><td th:text="${property.status}"></td></tr>
+    </table>
+	<!-- 수정 요청 버튼 -->
+	<button type="button" onclick="openEditPopup()" class="rplist-btn rplist-btn-edit">수정/삭제 요청</button>
+
+	<!-- 팝업창 영역 -->
+	<div id="editRequestPopup" class="edit-popup">
+	  <form th:action="@{/realtor/requestEdit}" method="post" class="edit-popup-form">
+	    <input type="hidden" name="propertyId" th:value="${property.property_id}" />
+
+	    <h3 class="edit-popup-title">매물 수정/삭제 요청</h3>
+
+	    <label for="requestedFields">요청 내용</label><br>
+	    <textarea id="requestedFields" name="requestedFields" required></textarea><br><br>
+
+	    <label for="reason">요청 사유</label><br>
+	    <textarea id="reason" name="reason" required></textarea><br><br>
+
+	    <div class="edit-popup-actions">
+	      <button type="submit" class="rplist-btn rplist-btn-edit">요청 보내기</button>
+	      <button type="button" onclick="closeEditPopup()" class="rplist-btn rplist-btn-cancel">닫기</button>
+	    </div>
+	  </form>
+	</div>
+
+  <script>
+    function openEditPopup() {
+      document.getElementById("editRequestPopup").style.display = "block";
+    }
+    function closeEditPopup() {
+      document.getElementById("editRequestPopup").style.display = "none";
+    }
+  </script>
+</div>
+
+</body>
+</html>

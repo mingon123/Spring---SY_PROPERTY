@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"  
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>공지사항 상세</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+    <h2>공지사항 상세</h2>
+    <div class="notice-box">
+    <table class="striped-table">
+        <tr>
+            <th>제목</th>
+            <td class="content-td" th:utext="${notice.title}"></td>
+        </tr>
+        <tr>
+	    <th>내용</th>
+		    <td class="content-td" th:utext="${notice.content}"></td>
+		</tr>
+        <tr>
+            <th>작성일</th>
+            <td class="content-td" th:utext="${notice.reg_date}"></td>
+        </tr>             
+    </table>
+    </div>
+    <div class="align-right">
+        <div class="button-area">
+            <input type="button" class="btn-register" value="목록" th:onclick="|location.href='@{/admin/notice/list}'|">
+            <input type="button" value="수정" class="btn-register" 
+    th:onclick="|location.href='@{/admin/notice/update(notice_num=${notice.notice_num})}'|">
+            <input type="button" value="삭제" class="btn-register" id="delete_btn">
+        </div>
+       <script type="text/javascript">
+				const delete_btn = document.getElementById('delete_btn');
+				delete_btn.onclick=function(){
+					let choice = confirm('삭제하시겠습니까?');
+					if(choice){
+						location.replace('delete?notice_num=[[${notice.notice_num}]]');
+					}
+				};
+			</script>   
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.policy.dao.PolicyMapper">
+
+  <!-- 운영정책 목록 -->
+  <select id="selectList" parameterType="map"
+          resultType="kr.spring.policy.vo.PolicyVO">
+    SELECT *
+    FROM (
+      SELECT a.*, rownum rnum
+      FROM (
+        SELECT Policy_num, title, content, reg_date, modi_date
+        FROM policy
+        ORDER BY policy_num DESC
+      ) a
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+  </select>
+
+  <!-- 운영정책 총 개수 -->
+  <select id="selectRowCount" resultType="int">
+    SELECT COUNT(*) FROM policy
+  </select>
+
+  <!-- 운영정책 등록 -->
+  <insert id="insertPolicy" parameterType="kr.spring.policy.vo.PolicyVO">
+    INSERT INTO policy (
+      policy_num, title, content, reg_date
+    ) VALUES (
+      policy_seq.nextval, #{title}, #{content}, SYSDATE
+    )
+  </insert>
+
+  <!-- 운영정책 상세 -->
+  <select id="selectPolicy" parameterType="long"
+          resultType="kr.spring.policy.vo.PolicyVO">
+    SELECT * FROM policy
+    WHERE policy_num = #{policy_num}
+  </select>
+
+  <!-- 운영정책 수정 -->
+  <update id="updatePolicy" parameterType="kr.spring.policy.vo.PolicyVO">
+    UPDATE policy
+    SET title = #{title},
+        content = #{content},
+        modi_date = SYSDATE  
+    WHERE policy_num = #{policy_num}
+  </update>
+
+  <!-- 운영정책 삭제 -->
+  <delete id="deletePolicy" parameterType="long">
+    DELETE FROM policy WHERE policy_num = #{policy_num}
+  </delete>
+
+</mapper>

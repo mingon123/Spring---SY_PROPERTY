@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.qna.dao.QnaMapper">
+
+  <!-- QnA 목록 (사용자별) -->
+  <select id="selectList" parameterType="map" resultType="kr.spring.qna.vo.QnaVO">
+    SELECT *
+    FROM (
+      SELECT a.*, rownum rnum
+      FROM (
+        SELECT 
+          qna_num, 
+          title, 
+          content, 
+          reg_date, 
+          modi_date, 
+          user_num, 
+          answer_status,
+          answer,
+          photo,
+          photo_name,
+          category
+        FROM qna
+        WHERE user_num = #{userNum}
+        ORDER BY qna_num DESC
+      ) a
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+  </select>
+
+  <!-- QnA 총 개수 (사용자별) -->
+  <select id="selectRowCount" parameterType="map" resultType="int">
+    SELECT COUNT(*) FROM qna WHERE user_num = #{userNum}
+  </select>
+
+  <!-- 관리자 전체 QnA 목록 -->
+  <select id="selectListAll" parameterType="map" resultType="kr.spring.qna.vo.QnaVO">
+    SELECT *
+    FROM (
+      SELECT a.*, rownum rnum
+      FROM (
+        SELECT 
+          qna_num, 
+          title, 
+          content, 
+          reg_date, 
+          modi_date, 
+          user_num, 
+          answer_status,
+          answer,
+          photo,
+          photo_name,
+          category
+        FROM qna
+        ORDER BY qna_num DESC
+      ) a
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+  </select>
+
+  <!-- 관리자 전체 QnA 총 개수 -->
+  <select id="selectRowCountAll" resultType="int">
+    SELECT COUNT(*) FROM qna
+  </select>
+
+  <!-- QnA 등록 -->
+  <insert id="insertQna" parameterType="kr.spring.qna.vo.QnaVO">
+    INSERT INTO qna (
+      qna_num, title, content, reg_date, photo, photo_name, user_num, category, answer_status
+    ) VALUES (
+      qna_seq.nextval, #{title}, #{content}, SYSDATE, #{photo,jdbcType=BLOB}, #{photo_name,jdbcType=VARCHAR}, #{user_num}, #{category}, '대기'
+    )
+  </insert>
+
+  <!-- QnA 상세 -->
+  <select id="selectQna" parameterType="long" resultType="kr.spring.qna.vo.QnaVO">
+    SELECT 
+      qna_num, 
+      title, 
+      content, 
+      reg_date, 
+      modi_date, 
+      user_num, 
+      answer_status,
+      answer,
+      photo,
+      photo_name,
+      category
+    FROM qna
+    WHERE qna_num = #{qna_num}
+  </select>
+
+  <!-- QnA 수정 -->
+  <update id="updateQna" parameterType="kr.spring.qna.vo.QnaVO">
+    UPDATE qna
+    SET
+      <if test="photo_name != null">
+        photo_name = #{photo_name},
+      </if>
+      title = #{title},
+      content = #{content},
+      category = #{category}
+    WHERE qna_num = #{qna_num}
+  </update>
+
+  <!-- QnA 삭제 -->
+  <delete id="deleteQna" parameterType="long">
+    DELETE FROM qna WHERE qna_num = #{qna_num}
+  </delete>
+
+  <!-- 답변 등록 및 상태 변경 -->
+  <update id="updateAnswer" parameterType="kr.spring.qna.vo.QnaVO">
+    UPDATE qna
+    SET 
+      answer = #{answer},
+      answer_status = #{answer_status},
+      modi_date = SYSDATE
+    WHERE qna_num = #{qna_num}
+  </update>
+
+</mapper>

@@ -1,0 +1,202 @@
+@charset "UTF-8";
+
+.page-main{
+	width: 80%;
+	margin: 0 auto;
+}
+
+/*쉐어하우스 목록-----------------------------------------------*/
+.sharehouse-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 20px;
+}
+
+.sharehouse-item {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.sharehouse-item img {
+  background-color: #e7e7e7;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.house-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.house-info .price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+.house-info .title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.house-info .position {
+  color: #444;
+  font-size: 14px;
+}
+
+.house-info .summary {
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
+}
+
+a.sharehouse-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* 블록으로 지정해 div처럼 동작하도록 */
+}
+a.sharehouse-item-link:hover {
+  text-decoration: none;
+}
+
+.align-center {
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+
+/* 지역 필터 - 기본적인 드롭다운 스타일 */
+select {
+  border: none;             /* 테두리 제거 */
+  outline: none;            /* 포커스 테두리 제거 */
+  font-size: 16px;
+  font-weight: bold;
+  padding: 6px 12px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/*쉐어하우스 상세 화면-----------------------------------------------*/
+.house-title-info{
+  text-align: center;
+}
+/*쉐어하우스 이미지 스와이퍼*/
+.swiper {
+  width: 100%;
+  max-width: 700px;
+  height: 400px;
+  margin: 0 auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/*쉐어하우스 타이틀*/
+.house-title-info {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 100;
+  padding-top: 5px;
+  padding-bottom: 3px;
+}
+/*탭 메뉴*/
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #ddd;
+  margin-top: 20px;
+  /*스크롤바 이동시 움직이지 않도록 고정*/
+  position: sticky;
+  top: 147px; /* house-title-info 높이에 따라 조절 */
+  background-color: #fff;
+  z-index: 99;
+  border-bottom: 1px solid #ddd;
+}
+.tab {
+  flex: 1;
+  padding: 12px 0;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  outline: none;  
+  background-color: transparent;
+  border-bottom: 2px solid transparent;
+  font-size: 15px;
+  font-weight: bold;
+  color: #888;
+}
+.tab.active {
+  border-bottom: 2px solid #007bff;
+  font-weight: bold;
+  color: #007bff;
+}
+/*쉐어하우스 상세 내용*/
+.info-item, .room-item {
+  display: flex;
+  margin-bottom: 6px;
+}
+.info-label {
+  width: 120px; /* 항목 이름 고정 너비 */
+  font-weight: bold;
+  color: #333;
+}
+/* .info-value {
+  flex: 1; 나머지 영역을 자동으로 채움
+} */
+/*평면도*/
+.floor-img{
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+/*상세 설명*/
+.info-title{
+  font-weight: bold;
+  color: #333;
+}
+
+/*방 목록*/
+.room-img{  
+  background-color: #e7e7e7;
+  width: 100px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+.room-capacity{
+  font-size: 14px;
+  color: #888;
+}
+.room-price{
+  font-size: 15px;
+  font-weight: bold;
+}
+a.room-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* 블록으로 지정해 div처럼 동작하도록 */
+}
+a.room-item-link:hover {
+  text-decoration: none;
+}
+
+/*지도*/
+.map-box {
+  width: 100%;
+  height: 300px;
+  margin: 0 auto;
+}

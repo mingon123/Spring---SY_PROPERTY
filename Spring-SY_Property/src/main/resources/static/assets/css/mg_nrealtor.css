@@ -1,0 +1,198 @@
+@charset "UTF-8";
+
+/* 미인증 중개사 안내 영역 */
+.nrealtor-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+.guide-text p {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+.guide-action {
+  margin-top: 40px;
+}
+.guide-action .menu-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px 30px;
+  transition: box-shadow 0.3s ease;
+}
+.guide-action .menu-box:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.guide-action .menu-box img {
+  width: 160px;
+  height: 140px;
+  margin-bottom: 12px;
+}
+.guide-action .menu-label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #222;
+}
+
+.user-mypage-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: #f9fbfd;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e1e6ee;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.user-mypage-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.user-info-box {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.user-info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-info-box li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #ddd;
+  padding: 10px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.user-info-box li span:first-child {
+  font-weight: 600;
+  color: #666;
+  min-width: 140px;
+}
+
+.user-info-box li span:last-child {
+  flex: 1;
+  text-align: right;
+  color: #111;
+}
+
+.page-main {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 32px;
+  background-color: #fdfdfd;
+  border: 1px solid #e1e6ee;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.page-main h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 36px;
+}
+
+form ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px 0;
+}
+
+form ul li {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+form label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="file"],
+form input[type="password"],
+form select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccd1d9;
+  border-radius: 6px;
+  transition: border 0.2s ease;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="file"]:focus,
+form select:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+.zip-flex {
+  display: flex;
+  gap: 8px;
+}
+
+.zip-flex input[type="text"] {
+  flex: 1;
+}
+.nrealtor-btn {
+  padding: 8px 18px;
+  background-color: #4a90e2;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 6px;
+  height: auto;
+}
+
+.nrealtor-btn:hover {
+  background-color: #3b7dd8;
+}
+
+.error-color,
+.field-error {
+  color: #d9534f;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.align-center {
+  text-align: center;
+  margin-top: 30px;
+}
+.align-center .nrealtor-btn {
+  min-width: 120px;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}

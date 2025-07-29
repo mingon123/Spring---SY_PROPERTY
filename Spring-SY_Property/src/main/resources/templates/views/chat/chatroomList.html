@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>내 채팅방</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.chat.css}" />
+  <link rel="stylesheet" th:href="@{/assets/css/hd.chatPopup.css}" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script th:src="@{/assets/js/chat.js}"></script>
+</head>
+
+<body class="chatroom-page">
+<div layout:fragment="content" class="page-main">
+  <div class="chatroom-container">
+    <div class="chatroom-header">내 채팅방</div>
+
+    <div class="chatroom-table-box">
+      <table class="chatroom-table">
+        <thead>
+        <tr>
+          <th>채팅방 번호</th>
+          <th>매물 번호</th>
+          <th>중개사 번호</th>
+          <th>개설일</th>
+          <th>입장</th>
+        </tr>
+        </thead>
+        <tbody>
+         <tr th:each="room : ${chatrooms}">
+           <td th:text="${room.chatroom_num}"></td>
+           <td th:text="${room.property_num}"></td>
+           <td th:text="${room.realtor_user_num}"></td>
+           <td th:text="${#dates.format(room.room_date, 'yyyy-MM-dd')}"></td>
+           <td>
+             <button type="button"
+                     class="chat-btn chat-btn-primary"
+                     th:attr="data-chatroom-num=${room.chatroom_num}, 
+                              data-user-num=${user_num},
+                              data-user-type=${isRealtor} ? 'REALTOR' : 'USER'">
+               입장
+             </button>
+           </td>
+         </tr>
+        <tr th:if="${#lists.isEmpty(chatrooms)}">
+          <td colspan="5" class="chatroom-empty-msg">참여한 채팅방이 없습니다.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+   
+   <!-- 페이징 처리 -->
+   <div th:utext="${page}"></div>
+
+   <!-- 마이페이지로 리다이렉트 -->
+    <div class="chatroom-actions">
+      <a th:href="@{/user/myPage}" class="chat-btn chat-btn-secondary">마이페이지</a>
+    </div>
+  </div>
+</div>
+
+<!-- 채팅 팝업 -->
+<div th:replace="fragments/chatPopup :: popup"></div>
+
+</body>
+</html>

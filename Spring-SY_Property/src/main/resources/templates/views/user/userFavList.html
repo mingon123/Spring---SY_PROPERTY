@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>내 관심 매물</title>
+  <link rel="stylesheet" th:href="@{/assets/css/hd.fav.css}" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<div layout:fragment="content" class="page-main">
+  <div class="user-mypage-container">
+    <div class="user-mypage-header">내가 좋아요한 매물</div>
+
+    <div class="fav-property-list">
+      <div th:each="p : ${properties}" class="fav-property-card no-image">
+        <div class="fav-property-info">
+          <div class="fav-property-title" th:text="${p.title}"></div>
+          <div class="fav-property-desc">
+            <span th:text="${p.address}"></span> |
+            <span th:text="${p.price} + '원'"></span> |
+            <span th:text="${p.area_m2} + '㎡'"></span>
+          </div>
+          <a th:href="@{'/property/favDetail/' + ${p.property_id}}"
+             class="chat-btn chat-btn-primary detail-link">
+            상세보기
+          </a>
+        </div>
+      </div>
+
+      <!-- 좋아요한 매물이 없을 경우 -->
+      <div th:if="${#lists.isEmpty(properties)}" class="chatroom-empty-msg">
+        좋아요한 매물이 없습니다.
+      </div>
+    </div>
+
+    <!-- 페이징 -->
+    <div class="pagination" th:utext="${page}"></div>
+
+    <!-- 마이페이지로 돌아가기 -->
+    <div class="chatroom-actions">
+      <a th:href="@{/user/myPage}" class="chat-btn chat-btn-secondary">마이페이지</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

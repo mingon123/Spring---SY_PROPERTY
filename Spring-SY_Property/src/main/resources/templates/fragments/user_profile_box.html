@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="user-profile-box" th:fragment="userProfileBox">
+  <div class="photo-area">
+    <img th:src="@{/user/photoView}" width="200" height="200" class="my-photo">
+    <div class="camera" id="photo_btn">
+      <img th:src="@{/assets/images/camera.png}" width="35">
+    </div>	  
+	<div id="photo_choice" class="photo-choice-box" style="display: block;">
+	    <input type="file" id="upload" accept="image/gif,image/png,image/jpeg" style="display:none;">
+	    
+	    <div class="button-group">
+	      <button type="button" id="photo_submit" class="action-btn submit-btn" disabled>전송</button>
+	      <button type="button" id="photo_reset" class="action-btn cancel-btn">취소</button>
+	    </div>
+	  </div>
+
+  </div>
+
+  <div class="profile-actions">
+    <input type="button" value="비밀번호 변경" class="menu-btn"
+           th:onclick="|location.href='@{/user/changePassword}'|">
+    <input type="button" value="회원탈퇴" class="menu-btn"
+           th:onclick="|location.href='@{/user/delete}'|">
+  </div>
+  
+  
+</div>
+</html>

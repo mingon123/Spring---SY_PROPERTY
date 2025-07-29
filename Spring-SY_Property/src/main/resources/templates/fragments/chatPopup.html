@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- 채팅 팝업 오버레이 -->
+<div id="chat-popup-overlay"
+     class="chat-popup-overlay"
+     th:attr="data-chatroom-num=${chatroom_num}, data-user-num=${user_num}"
+     style="display: none;">
+
+  <div class="chat-popup-box">
+    <!-- 헤더 -->
+    <div class="chat-popup-header">
+      <h3 class="chat-popup-title">BangBangGO Chat</h3>
+      <button type="button" class="chat-popup-close">×</button>
+    </div>
+
+    <!-- 메시지 영역 -->
+    <div id="chat-messages" class="chat-popup-messages"></div>
+
+    <!-- 입력 영역 -->
+    <div class="chat-popup-input-area">
+      <textarea id="message-input"
+                class="chat-popup-input"
+                placeholder="메시지를 입력하세요..."></textarea>
+      <button type="button" id="send-btn" class="chat-popup-send-btn">보내기</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

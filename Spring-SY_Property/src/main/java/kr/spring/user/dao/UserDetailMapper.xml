@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="kr.spring.user.dao.UserDetailMapper">
+	<!-- 회원가입 -->
+	<insert id="insertUserDetail" parameterType="userDetailVO">
+		INSERT INTO users_detail (
+			user_num,
+			name,
+			phone,
+			email,
+			zipcode,
+			address1,
+			address2)
+		VALUES (
+			#{user_num},
+			#{name},
+			#{phone},
+			#{email},
+			#{zipcode},
+			#{address1},
+			#{address2})
+	</insert>
+	
+	<!-- 회원정보수정 -->
+	<update id="updateUserDetail" parameterType="userDetailVO">
+		UPDATE users_detail
+		SET
+			name=#{name},
+			phone=#{phone},
+			email=#{email},
+			zipcode=#{zipcode},
+			address1=#{address1},
+			address2=#{address2},
+			modi_date=SYSDATE
+		WHERE user_num=#{user_num}
+	</update>
+	
+</mapper>
+
+
+
+
+
+

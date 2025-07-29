@@ -1,0 +1,321 @@
+@charset "UTF-8";
+
+/*목록 검색바
+--------------------------*/
+form#search_form #order{
+	height:32px;
+}
+/* 게시판 목록
+--------------------------*/
+form#board_register, form#board_modify{
+	padding:0 0 10px 0;
+	width:800px;
+	border:none;
+}
+form#board_register ul, form#board_modify ul{
+	padding:20px;
+}
+form#board_register input[type="text"], 
+                   form#board_modify input[type="text"]{
+	width:759px;
+	margin-bottom:10px;
+}
+/*공지사항, 운영정책, tip, 뉴스, faq 관리자 틀*/
+/* 사각형 박스 */
+.notice-box {
+	width: 800px;
+	margin: 20px auto;
+	padding: 20px;
+	border: 1px solid #c0c0c0;
+	border-radius: 10px;
+	background-color: #ffffff;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 목록, 상세 테이블 */
+
+.striped-table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 2px solid #c0c0c0;
+}
+
+.striped-table td,
+.striped-table th {
+  padding: 12px;
+  text-align: center;
+  white-space: pre-line;
+  background-color: #ffffff;
+  border: 1px solid #c0c0c0;
+}
+
+/* 등록 버튼 위치 오른쪽 정렬 */
+.button-area {
+	text-align: right;
+	margin: 20px 0;
+}
+
+/* 파란색 등록 버튼 */
+.btn-register {
+	background-color: #1E41D0;
+	color: #ffffff;
+	border: none;
+	padding: 8px 20px;
+	border-radius: 5px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.btn-register:hover {
+	background-color: #1633a8; /* 진한 파랑으로 hover 효과 */
+}
+
+/* 게시판 상세
+--------------------------*/
+ul.detail-info{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+ul.detail-info li{
+	margin:0;
+	padding-top:5px;
+	display:inline-block;
+}
+ul.detail-info li.resp-pro{
+	display:flex;
+	align-items:center;
+	gap:12px;
+}
+ul.detail-info li:last-child{
+	vertical-align:top;
+}
+
+#output_fcount{
+	width:50px;
+	display:inline-block;
+}
+
+form#re_form{
+	width:650px;
+	border:none;
+}
+span.re-title{
+	color:#000;
+	font-size:12pt;
+	line-height:200%;
+}
+span.letter-count{
+	font-size:10pt;
+	color:#999;
+}
+form#mre_form,form#mresp_form{
+	border:none;
+	margin:5px;
+}
+form#resp_form{
+	background-color:#eeeeee;
+	border-radius:20px;
+	border:none;
+	padding:10px 10px 0 10px;
+	margin:10px 5px 5px 5px;
+	height:130px;
+}
+form#resp_form textarea{
+	width:560px;
+}
+textarea.rep-content{
+	width:90%;
+	height:50px;
+	margin:10px 10px;
+}
+div#re_first,div#mre_first,div#mresp_first{
+	float:left;
+	width:64%;
+	padding-left:15px;
+	margin-bottom:10px;
+}
+div#re_second,div#mre_second,div#mresp_second{
+	float:left;
+	width:24%;
+	padding-right:35px;
+	margin-bottom:10px;
+}
+div#resp_first{
+	float:left;
+	width:70%;
+	padding-left:15px;
+	margin-bottom:10px;
+}
+div#resp_second{
+	float:left;
+	width:26%;
+	margin-bottom:10px;
+}
+div#loading{
+	width:100%;
+	height:50px;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
+.modify-btn,.delete-btn,.resp-modify-btn,
+  .resp-delete-btn,.response-btn,
+   .response2-btn,.paging-button input{
+	padding:4px 20px;
+	border:1px solid #f0f2f1;
+	border-radius:20px;
+	color:#6e6e6e;
+	background-color:#f0f2f1;
+	font-weight:bold;
+	cursor:pointer;   
+}
+.modify-btn:hover,.delete-btn:hover,.resp-modify-btn:hover,
+  .resp-delete-btn:hover,.response-btn:hover,
+   .response2-btn:hover,.paging-button input:hover{
+	background-color:#e1e3e2;
+	color:#000000;
+	transition:0.2s ease-out;
+	height:30px;   
+}       
+.rescontent-btn{
+	width:300px;
+	margin:10px 10px 0 10px;
+	padding:4px 20px;
+	border:1px solid #f0f2f1;
+	border-radius:20px;
+	color:#6e6e6e;
+	background-color:#f0f2f1;
+	font-weight:bold;
+	cursor:pointer;
+}
+.rescontent-btn:hover{
+	background-color:#e1e3e2;
+	color:#000000;
+	transition:0.2s ease-out;
+	height:30px;
+}
+div.paging-button{
+	text-align:right;
+}
+div#output{
+	clear:both;
+}
+div.item{
+	margin-top:10px;
+}
+div.sub-item{
+	margin-top:10px;
+	border-left:2px solid #e1e3e2;
+	margin-left:20px;
+	padding-left:10px;
+}
+div.respitem{
+	margin-top:10px;
+	padding-left:50px;
+}
+div.respitem .detail-info li b{
+	margin-left:12px;
+}
+div.resp-sub-item{
+	border-left:2px solid #e1e3e2;
+	margin-left:16px;
+	padding-left:10px;
+}
+
+/*뉴스*/
+.news-title {
+	font-weight: bold;
+	font-size: 1.6em;
+	margin-bottom: -7px;
+}
+
+.news-regdate {
+	text-align: right;
+	margin-bottom: 20px;
+	color: #666;
+	font-size: 0.9em;
+}
+
+.news-content {
+	margin-bottom: 30px;
+	line-height: 1.6;
+}
+
+.news-image {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.page-main {
+  padding-top: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+/*TIP*/
+.tip-title {
+	font-weight: bold;
+	font-size: 1.6em;
+	margin-bottom: -7px;
+	
+}
+
+.tip-regdate {
+	text-align: right;
+	margin-bottom: 20px;
+	color: #666;
+	font-size: 0.9em;
+}
+
+.tip-content {
+	margin-bottom: 30px;
+	line-height: 1.6;
+}
+
+.tip-image {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.detail-img{
+	max-width: 600px; width: 100%;
+}
+
+
+/* TIP목록 */
+  .tip-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4열 고정 */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 30px;
+  }
+
+  .tip-item {
+    padding: 1px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .tip-item img {
+    width: 180px;
+    height: 190px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 10px auto;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  hr {
+    width: 100%;
+    margin: 0 auto 30px auto;
+    border: 1px solid #ccc;
+  }

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>쉐어하우스 방 상세</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" th:href="@{/assets/css/il_room.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+
+<div layout:fragment="content" class="page-main">
+	
+	<!-- 방 이름 탭 -->
+	<ul class="room-tab">
+	  <li th:each="room, iterStat : ${roomList}"
+	      th:data-index="${iterStat.index}"
+	      th:text="${room.room_name}"
+	      th:classappend="${iterStat.index == 0} ? 'active' : ''">
+	  </li>
+	</ul>
+	
+	<!-- 방 상세 콘텐츠 영역 -->
+	<div class="room-contents">
+	  <div th:each="room, iterStat : ${roomList}" 	  	   
+	       th:class="'room-content ' + (${iterStat.index == 0} ? 'active' : '')" 
+	       th:data-index="${iterStat.index}">
+	       
+		<!-- 슬라이드 이미지 시작 -->
+		<div class="room-image swiper-container" th:attr="id='swiper-'+${room.room_id}">
+		  <div class="swiper-wrapper">
+		    <!-- 이미지가 있을 경우 -->
+		    <th:block th:if="${roomImages != null and !roomImages.isEmpty()}">
+		      <th:block th:each="img : ${roomImages}">
+		        <th:block th:if="${img.room_id == room.room_id}">
+		          <div class="swiper-slide">
+		            <img th:src="@{/sharehouse/viewSharehouseRoomImage(room_id=${img.room_id}, shr_img_seq=${img.shr_img_seq})}">
+		          </div>
+		        </th:block>
+		      </th:block>
+		    </th:block>
+		    <!-- 이미지가 없을 경우 -->
+		    <th:block th:if="${roomImages == null or roomImages.isEmpty()}">
+		      <div class="swiper-slide">
+		        <img th:src="@{/assets/image_bundle/room.png}">
+		      </div>
+		    </th:block>
+		  </div>
+		  <!-- 슬라이드 내비게이션 -->
+		  <div class="swiper-button-next"></div>
+		  <div class="swiper-button-prev"></div>
+		  <div class="swiper-pagination"></div>
+		</div>
+		<!-- 슬라이드 이미지 종료 -->
+	
+		<!-- 방 정보 시작 -->
+		<div class="room-title">
+			<span class="room-name" th:text="${room.room_name}"></span><br>
+			<span class="room-capacity" th:text="${room.capacity}"></span>
+		</div>
+		<div class="room-info">
+		   <h3>상세정보</h3>
+		   <div class="info-item">
+		     <span class="info-label">임대유형</span>
+		     <span th:text="'월세'"></span>
+		   </div>
+		   <div class="info-item">
+		     <span class="info-label">보증금</span>
+		     <span th:text="${room.deposit} + '만원'"></span>
+		   </div>
+		   <div class="info-item">	      
+		     <span class="info-label">월세</span>
+		     <span th:with="mp=${room.monthly_price}, 
+		     			 	mpFormatted=${#numbers.formatDecimal(mp, 0, (mp % 1 == 0 ? 0 : 1))}" 
+				   th:text="${mpFormatted} + '만원'"></span>
+		   </div>
+		   <div class="info-item">	      
+		     <span class="info-label">관리비</span>
+		     <span th:text="${room.maintenance_fee} + '만원'"></span>
+		   </div>
+		   <div class="info-item">	      
+		     <span class="info-label">이용기간</span>
+		     <th:block th:with="dmin = ${room.duration_min}, dmax = ${room.duration_max}">
+		     <span th:if="${dmin == 0.0 and dmax == 0.0}" 
+		     	   th:text="'제한없음'"></span>
+		     <span th:if="${dmin == 0.0 and dmax > 0.0}" 
+		     	   th:text="${#numbers.formatDecimal(dmax/30.0, 0, 0)} + '개월 이하'"></span>
+		     <span th:if="${dmin > 0.0 and dmax == 0.0}" 
+		     	   th:text="${#numbers.formatDecimal(dmin/30.0, 0, 0)} + '개월 이상'"></span>
+		     <span th:if="${dmin > 0.0 and dmax > 0.0}" 
+		     	   th:text="${#numbers.formatDecimal(dmin/30.0, 0, 0)} + '개월 ~ ' + 
+		     	   			${#numbers.formatDecimal(dmax/30.0, 0, 0)} + '개월'"></span>
+		     </th:block>
+		   </div>
+		   <h3>설명</h3>
+		   <span th:text="${room.room_info}"></span>
+		   <h3>옵션</h3>
+		   <span th:text="${room.options}"></span>
+		     
+		   <!-- 필요한 항목 추가 -->	        
+		</div>
+		<!-- 방 정보 끝 -->
+	
+	  </div>
+	</div><!-- end of room-contents -->
+	
+	<!-- 방 탭 전환 시작 -->
+	<script>
+	  document.addEventListener('DOMContentLoaded', function () {
+	    const tabs = document.querySelectorAll('.room-tab li');
+	    const contents = document.querySelectorAll('.room-content');
+	
+	    tabs.forEach(tab => {
+	      tab.addEventListener('click', function () {
+	        const index = this.dataset.index;
+	
+	        // 탭 활성화
+	        tabs.forEach(t => t.classList.remove('active'));
+	        this.classList.add('active');
+	
+	        // 콘텐츠 활성화
+	        contents.forEach(c => c.classList.remove('active'));
+	        document.querySelector(`.room-content[data-index="${index}"]`).classList.add('active');
+	      });
+	    });
+	  });
+	</script>
+	<!-- 방 탭 전환 끝  -->
+	
+	<!-- Swiper JS (Swiper 초기화) 시작 -->
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script>
+	  // 모든 swiper-container를 찾아 각각 초기화
+	  document.addEventListener('DOMContentLoaded', function () {
+	    document.querySelectorAll('.swiper-container').forEach(function (el) {
+	      new Swiper('#' + el.id, {
+	        loop: true,
+	        navigation: {
+	          nextEl: '#' + el.id + ' .swiper-button-next',
+	          prevEl: '#' + el.id + ' .swiper-button-prev',
+	        },
+	        pagination: {
+	          el: '#' + el.id + ' .swiper-pagination',
+	          clickable: true,
+	        },
+	      });
+	    });
+	  });
+	</script>
+	<!-- Swiper JS (Swiper 초기화) 끝 -->
+	
+</div>
+</body>
+</html>

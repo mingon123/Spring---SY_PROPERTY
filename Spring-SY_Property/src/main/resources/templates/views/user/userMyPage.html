@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_mypage}">
+<head>
+<meta charset="UTF-8">
+<title>마이페이지</title>
+<link rel="stylesheet" th:href="@{/assets/css/hd.mypage.css}" />
+
+</head>
+<body>
+
+<div layout:fragment="content" class="page-main">
+
+  <div class="user-mypage-container">
+    <div class="user-mypage-header">마이페이지</div>
+
+    <!-- 프로필 박스 -->
+    <div class="user-profile-box">
+      <div class="photo-area">
+        <img th:src="@{${user.user_type == 'REALTOR'} ? '/user/realtorPhotoView' : '/user/photoView'}" class="my-photo">
+		<!-- 숨겨진 파일 업로드 영역 -->
+		<form id="photo_form" enctype="multipart/form-data" th:data-user-type="${user.user_type}">
+		  <input type="file" id="upload" name="upload" accept="image/*" />
+		  <div id="photo_choice" style="display:none; margin-top:10px;">
+		    <button type="button" id="photo_submit" class="btn btn-primary">사진 등록</button>
+		    <button type="button" id="photo_reset" class="btn btn-secondary">취소</button>
+		  </div>
+		</form>
+      </div>
+
+      <div class="btn-group">
+      	<button class="btn btn-primary" th:onclick="|location.href='@{/user/changePassword}'|">비밀번호 변경</button>
+      	<button class="btn btn-primary" th:if="${user.user_type == 'USER'}" th:onclick="|location.href='@{/user/updateUser}'|">
+    		회원 정보 수정
+	  	</button>
+	  	<button class="btn btn-primary" th:unless="${user.user_type == 'USER'}" th:onclick="|location.href='@{/user/updateRealtor}'|">
+    		회원 정보 수정
+	    </button>
+        <button class="btn btn-primary" th:onclick="|location.href='@{/user/delete}'|">회원탈퇴</button>
+      </div>
+    </div>
+
+<div class="user-info-box">
+  <ul>
+    <!-- 별명은 공통 -->
+    <li th:if="${not #strings.isEmpty(user.nick_name)}">
+      <span>별명 :</span> <span th:text="${user.nick_name}"></span>
+    </li>
+
+    <!-- 일반회원 정보 -->
+    <th:block th:if="${user.user_type == 'USER'}">
+      <li th:if="${user.userDetail != null}">
+        <span>이름 :</span> <span th:text="${user.userDetail.name}"></span>
+      </li>
+      <li th:if="${user.userDetail != null}">
+        <span>전화번호 :</span> <span th:text="${user.userDetail.formattedPhone}"></span>
+      </li>
+      <li th:if="${user.userDetail != null}">
+        <span>이메일 :</span> <span th:text="${user.userDetail.email}"></span>
+      </li>
+      <li th:if="${user.userDetail != null}">
+        <span>우편번호 :</span> <span th:text="${user.userDetail.zipcode}"></span>
+      </li>
+      <li th:if="${user.userDetail != null}">
+        <span>주소 :</span>
+        <span th:text="${user.userDetail.address1} + ' ' + ${user.userDetail.address2}"></span>
+      </li>
+      <li th:if="${user.userDetail != null}">
+        <span>가입일 :</span>
+        <span th:text="${#dates.format(user.userDetail.reg_date, 'yyyy-MM-dd')}"></span>
+      </li>
+      <li th:if="${user.userDetail != null and user.userDetail.modi_date != null}">
+        <span>정보 수정일 :</span>
+        <span th:text="${#dates.format(user.userDetail.modi_date, 'yyyy-MM-dd')}"></span>
+      </li>
+    </th:block>
+
+    <!-- 중개사 회원 정보 -->
+    <th:block th:if="${user.user_type != 'USER'}">
+      <li th:if="${user.realtorDetail != null}">
+        <span>이름 :</span> <span th:text="${user.realtorDetail.name}"></span>
+      </li>
+      <li th:if="${user.realtorDetail != null}">
+        <span>전화번호 :</span> <span th:text="${user.realtorDetail.formattedPhone}"></span>
+      </li>
+      <li th:if="${user.realtorDetail != null}">
+        <span>이메일 :</span> <span th:text="${user.realtorDetail.email}"></span>
+      </li>
+      <li th:if="${user.realtorDetail != null}">
+        <span>우편번호 :</span> <span th:text="${user.realtorDetail.zipcode}"></span>
+      </li>
+      <li th:if="${user.realtorDetail != null}">
+        <span>주소 :</span>
+        <span th:text="${user.realtorDetail.address1} + ' ' + ${user.realtorDetail.address2}"></span>
+      </li>
+      <li th:if="${user.realtorDetail != null}">
+        <span>가입일 :</span>
+        <span th:text="${#dates.format(user.realtorDetail.reg_date, 'yyyy-MM-dd')}"></span>
+      </li>
+      <li th:if="${user.realtorDetail != null and user.realtorDetail.modi_date != null}">
+        <span>정보 수정일 :</span>
+        <span th:text="${#dates.format(user.realtorDetail.modi_date, 'yyyy-MM-dd')}"></span>
+      </li>
+    </th:block>
+  </ul>
+</div>
+
+  </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/assets/js/chat.js}"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"  
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>TIP 목록</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<style>
+  .list-img {
+    width: 150px;
+    height: auto;
+    object-fit: cover;
+  }
+</style>
+</head>
+
+<body>
+<div layout:fragment="content" class="page-main">
+  <h2>TIP</h2> 
+  <hr>
+  <div th:if="${#lists.isEmpty(list)}" class="result-display">
+    표시할 TIP이 없습니다.
+  </div>
+
+  <div th:if="${!#lists.isEmpty(list)}" class="tip-list">
+    <div th:each="tip : ${list}" class="tip-item">
+
+      <!-- 이미지가 있을 경우 -->
+      <div th:if="${not #strings.isEmpty(tip.photo_name) and
+                   (#strings.endsWith(tip.photo_name,'.jpg') or
+                    #strings.endsWith(tip.photo_name,'.JPG') or
+                    #strings.endsWith(tip.photo_name,'.jpeg') or
+                    #strings.endsWith(tip.photo_name,'.JPEG') or
+                    #strings.endsWith(tip.photo_name,'.gif') or
+                    #strings.endsWith(tip.photo_name,'.GIF') or
+                    #strings.endsWith(tip.photo_name,'.png') or
+                    #strings.endsWith(tip.photo_name,'.PNG'))}">
+        <img th:src="@{/assets/upload/{photo_name}(photo_name=${tip.photo_name})}" class="list-img">
+      </div>
+
+      <!-- 이미지가 없거나 확장자 불일치할 경우 대체 이미지 -->
+      <div th:unless="${not #strings.isEmpty(tip.photo_name) and
+                       (#strings.endsWith(tip.photo_name,'.jpg') or
+                        #strings.endsWith(tip.photo_name,'.JPG') or
+                        #strings.endsWith(tip.photo_name,'.jpeg') or
+                        #strings.endsWith(tip.photo_name,'.JPEG') or
+                        #strings.endsWith(tip.photo_name,'.gif') or
+                        #strings.endsWith(tip.photo_name,'.GIF') or
+                        #strings.endsWith(tip.photo_name,'.png') or
+                        #strings.endsWith(tip.photo_name,'.PNG'))}">
+        <img th:src="@{/assets/images/no-image.png}" class="list-img">
+      </div>
+
+      <div>
+        <a th:href="@{/tip/detail(tip_num=${tip.tip_num})}" th:text="${tip.title}"></a>
+      </div>
+      <div th:text="${tip.reg_date}"></div>
+    </div>
+  </div>
+
+  <div class="align-center" th:utext="${page}"></div>
+</div>
+</body>
+</html>

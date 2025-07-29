@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"	
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>TIP 상세</title>
+<link rel="stylesheet" th:href="@{/assets/css/he.css}">
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>TIP 상세</h2>
+	<div class="notice-box">
+	<table class="striped-table">
+		<tr>
+			<th>제목</th>
+			<td>[[${tip.title}]]</td>
+		</tr>
+		<tr>
+			<th>내용</th>
+			<td>[[${tip.content}]]</td>
+		</tr>
+		<tr>
+			<th>사진</th>
+			<td>
+				<div class="align-center"
+				     th:if="${not #strings.isEmpty(tip.photo_name) &&
+				              (#strings.endsWith(tip.photo_name,'.jpg') ||
+				               #strings.endsWith(tip.photo_name,'.JPG') ||
+				               #strings.endsWith(tip.photo_name,'.jpeg') ||
+				               #strings.endsWith(tip.photo_name,'.JPEG') ||
+				               #strings.endsWith(tip.photo_name,'.gif') ||
+				               #strings.endsWith(tip.photo_name,'.GIF') ||
+				               #strings.endsWith(tip.photo_name,'.png') ||
+				               #strings.endsWith(tip.photo_name,'.PNG')
+				              )}">
+				 	<img th:src="@{/assets/upload/{photo_name}(photo_name=${tip.photo_name})}" class="detail-img">             
+				</div>
+			</td>
+		</tr> 
+		<tr>
+			<th>작성일</th>
+			<td>[[${tip.reg_date}]]</td>
+		</tr>         	
+	</table>
+	</div>
+	<div class="align-right">
+		<!--  <th:block sec:authorize="isAuthenticated()" th:if="${#authentication.principal.memberVO.mem_num==board.mem_num}"> -->
+		<div class="button-area">
+			<input type="button" value="목록" class="btn-register" onclick="location.href='list'">
+			<input type="button" value="수정" class="btn-register" th:onclick="|location.href='/admin/tip/update?tip_num=${tip.tip_num}'|">
+			<input type="button" value="삭제" class="btn-register" id="delete_btn">
+		</div>
+			<script type="text/javascript">
+			    const delete_btn = document.getElementById('delete_btn');
+			    delete_btn.onclick = function() {
+			        let choice = confirm('삭제하시겠습니까?');
+			        if (choice) {
+			            location.replace('/admin/tip/delete?tip_num=[[${tip.tip_num}]]');
+			        }
+			    };
+			</script>
+
+	</div>
+</div>
+</body>
+</html>

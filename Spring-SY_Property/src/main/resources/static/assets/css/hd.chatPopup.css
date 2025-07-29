@@ -1,0 +1,164 @@
+/* 팝업 전체 오버레이 */
+.chat-popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* 팝업 박스 */
+.chat-popup-box {
+  width: 95%;
+  max-width: 480px;
+  height: 600px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  animation: popupIn 0.3s ease-out;
+}
+
+@keyframes popupIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 헤더 */
+.chat-popup-header {
+  background: linear-gradient(135deg, #4f91ff, #657eff);
+  color: white;
+  padding: 18px 24px;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-popup-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+.chat-popup-close:hover {
+  transform: scale(1.3);
+}
+
+/* 메시지 출력 영역 */
+.chat-popup-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #f3f6fb;
+}
+
+/* 메시지 행 */
+.chat-popup-message-row {
+  display: flex;
+  margin-bottom: 12px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-popup-message-row.self {
+  justify-content: flex-end;
+}
+.chat-popup-message-row.other {
+  justify-content: flex-start;
+}
+
+.chat-popup-message-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+}
+
+.chat-popup-message-row.self .chat-popup-message-bubble {
+  background: #4f91ff;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-popup-message-row.other .chat-popup-message-bubble {
+  background: #e4e6eb;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+/* 시간 표시 추가 가능 (선택) */
+.chat-popup-message-bubble::after {
+  content: attr(data-time);
+  display: block;
+  font-size: 10px;
+  color: #999;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* 입력창 */
+.chat-popup-input-area {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #ddd;
+  background: white;
+}
+
+.chat-popup-input {
+  flex: 1;
+  resize: none;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.chat-popup-input:focus {
+  border-color: #4f91ff;
+  box-shadow: 0 0 0 3px rgba(79, 145, 255, 0.2);
+}
+
+.chat-popup-send-btn {
+  margin-left: 10px;
+  background: #4f91ff;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.chat-popup-send-btn:hover {
+  background: #355ce0;
+}
+
+/* 아바타 (추후 확장용) */
+.chat-popup-avatar img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+}

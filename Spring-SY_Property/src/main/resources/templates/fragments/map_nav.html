@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+		  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<th:block th:fragment="sidebar">
+	<aside class="map-side-bar">
+	  <ul>
+		  <li>
+		  	<a href="#" class="menu-link active" data-type="room">
+				<img src="/assets/images/room.png" alt="원룸/투룸">
+				<span>원룸/투룸</span>
+			</a>
+		  </li>
+		  <li>
+		  	<a href="#" class="menu-link" data-type="apartment">
+		  		<img src="/assets/images/apartment.png" alt="아파트" >
+			 	<span>아파트</span>
+			 </a>
+		  </li>
+		  <li>
+		  	<a href="#" class="menu-link" data-type="house">
+		  		<img src="/assets/images/house.png" alt="주택/빌라">
+			 	<span>주택/빌라</span>
+			</a>
+		  </li>
+		  <li>
+		  	<a href="#" class="menu-link" data-type="officetel">
+		  		<img src="/assets/images/officetel.png" alt="오피스텔">
+             	<span>오피스텔</span>
+            </a>
+          </li>
+		  <li>
+		  	<a href="#" class="menu-link" data-type="sale">
+		  		<img src="/assets/images/house.png" alt="분양">
+			 	<span>분양</span>
+			</a>
+		   </li>                    
+	  </ul>
+	</aside>
+</th:block>
+</html>

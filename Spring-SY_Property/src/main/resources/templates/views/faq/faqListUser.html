@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout_basic}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>FAQ</title>
+    <link rel="stylesheet" href="/assets/css/he.css"/>  
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+
+<h2>FAQ</h2><hr>
+<div class="result-display" th:if="${count == 0}">표시할 FAQ가 없습니다.</div>
+<th:block th:if="${count > 0}">
+<div class="notice-box">
+    <table class="striped-table">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>질문</th>
+                <th>등록일</th>
+            </tr>
+        </thead>
+        <tbody id="faq-tbody">
+		    <th:block th:each="faq, stat : ${list}">
+		        <tr class="faq-row" th:data-id="${faq.faq_num}" style="cursor:pointer;">
+		            <td th:text="${count - stat.index}"></td>
+		            <td th:text="${faq.title}"></td>
+		            <td th:text="${faq.reg_date}"></td>
+		        </tr>
+		        <tr class="detail-row" style="display:none;">
+		            <td colspan="3"><div class="detail-content">불러오는 중...</div></td>
+		        </tr>
+		    </th:block>
+		</tbody>
+
+
+    </table>
+    </div>
+</th:block>
+<script src="/assets/js/jquery-3.7.1.min.js"></script> 
+<script src="/assets/js/faqUser.js"></script>
+</div>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.report.dao.ReportMapper">
+
+	  <!-- resultMap 정의 -->
+	  <resultMap id="reportResultMap" type="kr.spring.report.vo.ReportVO">
+	      <id property="report_num" column="report_num"/>
+	      <result property="reporter_num" column="reporter_num"/>
+	      <result property="suspect_num" column="suspect_num"/>
+	      <result property="suspect_user_id" column="suspect_user_id"/> <!-- users.id 조인해서 가져온 컬럼 -->
+	      <result property="title" column="title"/>
+	      <result property="content" column="content"/>
+	      <result property="report_date" column="report_date"/>
+	      <result property="r_photo" column="r_photo"/>
+	      <result property="r_photo_name" column="r_photo_name"/>
+	      <result property="report_type_num" column="report_type_num"/>
+	      <result property="report_type_name" column="report_type_name"/>
+	  </resultMap>
+	
+	  <!-- 목록 개수 조회 -->
+	  <select id="selectRowCount" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM report
+	    WHERE reporter_num = #{reporter_num, jdbcType=NUMERIC}
+	  </select>
+	
+	  <!-- 목록 조회 -->
+		<select id="selectList" parameterType="map" resultType="kr.spring.report.vo.ReportVO">
+		  SELECT 
+		    r.report_num,
+		    r.reporter_num,
+		    r.suspect_num,
+		    su.id AS suspect_user_id,
+		    r.title,
+		    r.content,
+		    r.report_date,
+		    r.r_photo,
+		    r.r_photo_name,
+		    r.report_type_num,
+		    rt.report_type_name
+		  FROM report r
+		  LEFT JOIN users su ON r.suspect_num = su.user_num
+		  LEFT JOIN report_type rt ON r.report_type_num = rt.report_type_num
+		  WHERE r.reporter_num = #{reporter_num}
+		  ORDER BY r.report_num DESC
+		</select>
+	
+	
+	  <!-- 신고유형 목록 -->
+	  <select id="selectTypeList" parameterType="map" resultType="kr.spring.report.vo.Report_typeVO">
+	    SELECT report_type_num, report_type_name
+	    FROM report_type
+	  </select>
+	
+	  <!-- 신고 등록 -->
+	  <insert id="insertReport" parameterType="kr.spring.report.vo.ReportVO">
+	    INSERT INTO report (
+	        report_num,
+	        reporter_num,
+	        suspect_num,
+	        title,
+	        content,
+	        report_date,
+	        r_photo,
+	        r_photo_name,
+	        report_type_num
+	    ) VALUES (
+	        report_seq.nextval,
+	        #{reporter_num, jdbcType=NUMERIC},
+	        #{suspect_num, jdbcType=NUMERIC},
+	        #{title, jdbcType=VARCHAR},
+	        #{content, jdbcType=VARCHAR},
+	        sysdate,
+	        #{r_photo, jdbcType=BLOB},
+	        #{r_photo_name, jdbcType=VARCHAR},
+	        #{report_type_num, jdbcType=NUMERIC}
+	    )
+	  </insert>
+
+	<select id="selectUserNumById" parameterType="String" resultType="Long">
+	    SELECT user_num FROM users WHERE id = #{userId}
+	</select>
+	
+<!-- 신고 상세 -->
+ <select id="selectReport" parameterType="long" resultType="kr.spring.report.vo.ReportVO">
+  SELECT 
+    r.report_num,
+    r.reporter_num,
+    r.suspect_num,
+    su.id AS suspect_user_id,
+    r.title,
+    r.content,
+    r.report_date,
+    r.r_photo,
+    r.r_photo_name,
+    r.report_type_num,
+    rt.report_type_name
+  FROM report r
+  LEFT JOIN users su ON r.suspect_num = su.user_num
+  LEFT JOIN report_type rt ON r.report_type_num = rt.report_type_num
+  WHERE r.report_num = #{report_num}
+</select>
+
+	
+	<!-- 신고 삭제 -->
+  <delete id="deleteReport" parameterType="long">
+    DELETE FROM report WHERE report_num = #{report_num}
+  </delete>
+
+<!-- 관리자 신고 목록 -->
+  <select id="selectListAll" parameterType="map" resultType="kr.spring.report.vo.ReportVO">
+    SELECT *
+    FROM (
+      SELECT a.*, rownum rnum
+      FROM (
+        SELECT 
+          report_num, 
+          title, 
+          report_date
+        FROM report
+        ORDER BY report_num DESC
+      ) a
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+  </select>
+
+  <!-- 관리자 신고 총 개수 -->
+  <select id="selectRowCountAll" resultType="int">
+    SELECT COUNT(*) FROM report
+  </select>
+  
+  <!-- 신고 수정 -->
+<update id="updateReport" parameterType="kr.spring.report.vo.ReportVO">
+  UPDATE report
+  <set>
+    <if test="r_photo_name != null">
+      r_photo_name = #{r_photo_name, jdbcType=VARCHAR},
+    </if>
+    report_type_num = #{report_type_num},
+    suspect_num = #{suspect_num},
+    title = #{title},
+    content = #{content}
+    <if test="r_photo != null">
+      , r_photo = #{r_photo, jdbcType=BLOB}
+    </if>
+  </set>
+  WHERE report_num = #{report_num}
+</update>
+
+
+
+</mapper>

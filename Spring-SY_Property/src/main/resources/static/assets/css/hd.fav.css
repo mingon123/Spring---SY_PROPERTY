@@ -1,0 +1,161 @@
+.fav-property-card.no-image {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+.fav-property-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fav-property-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.fav-property-desc {
+  font-size: 14px;
+  color: #666;
+}
+
+.detail-link {
+  align-self: flex-start;
+  padding: 6px 12px;
+  font-size: 13px;
+  background-color: #4e99e9;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.chatroom-header {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.chatroom-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.chatroom-empty-msg {
+  text-align: center;
+  color: #999;
+  margin-top: 30px;
+}
+
+.chatroom-actions {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.chat-btn.chat-btn-secondary {
+  padding: 8px 16px;
+  background-color: #ccc;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.pagination a {
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #333;
+  text-decoration: none;
+}
+
+.pagination .current {
+  background-color: #4e99e9;
+  color: white;
+  font-weight: bold;
+}
+
+/* ---------------------- */
+/* 매물 상세 페이지 스타일 */
+/* ---------------------- */
+
+.fav-detail-header {
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+/* 테이블 */
+.fav-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.fav-detail-table th,
+.fav-detail-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  font-size: 15px;
+}
+
+.fav-detail-table th {
+  background-color: #f5f7fa;
+  color: #555;
+  width: 22%;
+  font-weight: 600;
+}
+
+.fav-detail-table td {
+  color: #333;
+}
+
+/* 뒤로가기 버튼 영역 */
+.fav-detail-actions {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.fav-detail-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.fav-detail-btn-secondary {
+  background-color: #6c757d;
+}
+.fav-detail-btn-secondary:hover {
+  background-color: #5a6268;
+}
+.fav-detail-btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+.fav-detail-btn-primary:hover {
+  background-color: #0056b3;
+}
+

@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="kr.spring.user.dao.UserMapper">
+
+	<resultMap id="userDetailMap" type="kr.spring.user.vo.UserVO">
+	    <id property="user_num" column="user_num"/>
+	    <result property="id" column="id"/>
+	    <result property="nick_name" column="nick_name"/>
+	    <result property="authority" column="authority"/>
+	    <result property="passwd" column="passwd"/>
+	    <result property="report_count" column="report_count"/>
+	    <result property="user_type" column="user_type"/>
+	    <result property="oauth" column="oauth"/>
+	    
+	    <association property="userDetail" javaType="kr.spring.user.vo.UserDetailVO">
+	        <result property="name" column="name"/>
+	        <result property="phone" column="phone"/>
+	        <result property="email" column="email"/>
+	        <result property="zipcode" column="zipcode"/>
+	        <result property="address1" column="address1"/>
+	        <result property="address2" column="address2"/>
+	        <result property="photo" column="photo"/>
+	        <result property="photo_name" column="photo_name"/>
+	        <result property="modi_date" column="modi_date"/>
+	        <result property="reg_date" column="reg_date"/>
+	    </association>
+	    
+	    <association property="realtorDetail" javaType="kr.spring.user.vo.RealtorDetailVO">
+			<result property="realtor_num" column="realtor_num"/>
+			<result property="name" column="r_name"/>
+			<result property="phone" column="r_phone"/>
+			<result property="email" column="r_email"/>
+			<result property="zipcode" column="r_zipcode"/>
+			<result property="address1" column="r_address1"/>
+			<result property="address2" column="r_address2"/>
+			<result property="photo" column="r_photo"/>
+			<result property="photo_name" column="r_photo_name"/>
+			<result property="certificate" column="r_certificate"/>
+			<result property="certificate_name" column="r_certificate_name"/>
+			<result property="valid_date" column="valid_date"/>
+			<result property="reg_date" column="r_reg_date"/>
+			<result property="modi_date" column="r_modi_date"/>
+		</association>
+	</resultMap>
+	
+	<!-- 회원목록 처리 -->
+	<!-- sql 태그와 include 태그를 이용해서 SQL문을 재사용 -->
+	<sql id="userSearch">
+		<where>
+			u.user_type = 'USER'
+			<if test="keyword != null and keyword != ''">
+				AND(
+					<if test="keyfield==1">
+						(u.id LIKE '%' || #{keyword} || '%' OR
+						u.nick_name LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==2">
+						(ud.name LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==3">
+						(ud.email LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==4">
+						(ud.phone LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==5">
+						(u.id LIKE '%' || #{keyword} || '%' OR
+						u.nick_name LIKE '%' || #{keyword} || '%' OR
+						ud.name LIKE '%' || #{keyword} || '%' OR
+						ud.email LIKE '%' || #{keyword} || '%' OR
+						ud.phone LIKE '%' || #{keyword} || '%')
+					</if>
+				)
+			</if>
+			
+	        <if test="authorityList != null and authorityList.size() > 0">
+	            AND u.authority IN
+	            <foreach item="auth" collection="authorityList" open="(" separator="," close=")">
+	                #{auth}
+	            </foreach>
+	        </if>
+		</where>
+	</sql>
+	
+	<sql id="realtorSearch">
+		<where>
+			u.user_type = 'REALTOR'
+			<if test="keyword != null and keyword != ''">
+				AND(
+					<if test="keyfield==1">
+						(u.id LIKE '%' || #{keyword} || '%' OR
+						u.nick_name LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==2">
+						(rd.name LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==3">
+						(rd.email LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==4">
+						(rd.phone LIKE '%' || #{keyword} || '%')
+					</if>
+					<if test="keyfield==5">
+						(u.id LIKE '%' || #{keyword} || '%' OR
+						u.nick_name LIKE '%' || #{keyword} || '%' OR
+						rd.name LIKE '%' || #{keyword} || '%' OR
+						rd.email LIKE '%' || #{keyword} || '%' OR
+						rd.phone LIKE '%' || #{keyword} || '%')
+					</if>
+				)
+			</if>
+			<if test="authorityList != null and authorityList.size() > 0">
+			    AND (
+			        <foreach item="auth" collection="authorityList" separator=" OR ">
+			            <choose>
+			                <when test="auth == 'ROLE_N_REALTOR_CERT'">
+			                    (u.authority = 'ROLE_N_REALTOR' AND rd.certificate_name IS NOT NULL)
+			                </when>
+			                <otherwise>
+			                    u.authority = #{auth}
+			                </otherwise>
+			            </choose>
+			        </foreach>
+			    )
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 전체/검색 레코드수 -->
+	<select id="selectRowCount" parameterType="map" resultType="integer">
+		SELECT
+			COUNT(*)
+		FROM users u 
+		LEFT OUTER JOIN users_detail ud ON u.user_num = ud.user_num
+		<include refid="userSearch"/>
+	</select>
+	
+	<!-- 전체/검색 목록 -->
+	<select id="selectList" parameterType="map" resultMap="userDetailMap">
+		SELECT
+			*
+		FROM (SELECT
+				a.*,
+				rownum rnum
+			  FROM (
+			  	SELECT
+				  	u.user_num,
+					u.id,
+					u.nick_name,
+					u.authority,
+					u.passwd,
+					
+					-- users_detail
+					ud.name,
+					ud.phone,
+					ud.email,
+					ud.zipcode,
+					ud.address1,
+					ud.address2,
+					ud.photo,
+					ud.photo_name,
+					ud.modi_date,
+					ud.reg_date
+			  	FROM users u 
+			  	LEFT OUTER JOIN users_detail ud ON u.user_num = ud.user_num
+			  	<include refid="userSearch"/>
+			  	ORDER BY ud.reg_date DESC NULLS LAST)a)
+	<![CDATA[
+		WHERE rnum >= #{start} AND rnum <= #{end}
+	]]>
+	</select>
+
+	<!-- 전체/검색 레코드수 -->
+	<select id="selectRealtorRowCount" parameterType="map" resultType="integer">
+		SELECT
+			COUNT(*)
+		FROM users u 
+		LEFT OUTER JOIN realtor_detail rd ON u.user_num = rd.realtor_num
+		<include refid="realtorSearch"/>
+	</select>
+	
+	<!-- 전체/검색 목록 -->
+	<select id="selectRealtorList" parameterType="map" resultMap="userDetailMap">
+		SELECT
+			*
+		FROM (SELECT
+				a.*,
+				rownum rnum
+			  FROM (
+			  	SELECT
+				  	u.user_num,
+					u.id,
+					u.nick_name,
+					u.authority,
+					u.passwd,
+					
+					-- realtor_detail
+					rd.realtor_num,
+					rd.name AS r_name,
+					rd.phone AS r_phone,
+					rd.email AS r_email,
+					rd.zipcode AS r_zipcode,
+					rd.address1 AS r_address1,
+					rd.address2 AS r_address2,
+					rd.photo AS r_photo,
+					rd.photo_name AS r_photo_name,
+					rd.certificate AS r_certificate,
+					rd.certificate_name AS r_certificate_name,
+					rd.valid_date,
+					rd.reg_date AS r_reg_date,
+					rd.modi_date AS r_modi_date
+			  	FROM users u 
+			  	LEFT OUTER JOIN realtor_detail rd ON u.user_num = rd.realtor_num
+			  	<include refid="realtorSearch"/>
+			  	ORDER BY rd.reg_date DESC NULLS LAST)a)
+	<![CDATA[
+		WHERE rnum >= #{start} AND rnum <= #{end}
+	]]>
+	</select>
+
+	<!-- 이메일로 회원 조회 (UserVO 반환) -->
+	<select id="selectUserByEmail" parameterType="string" resultMap="userDetailMap">
+		SELECT
+			u.user_num,
+			u.id,
+			u.nick_name,
+			u.authority,
+			u.passwd,
+			ud.name,
+			ud.phone,
+			ud.email,
+			ud.zipcode,
+			ud.address1,
+			ud.address2,
+			ud.photo,
+			ud.photo_name,
+			ud.modi_date,
+			ud.reg_date
+		FROM users u
+		JOIN users_detail ud ON u.user_num = ud.user_num
+		WHERE ud.email = #{email}
+	</select>
+	
+	<select id="selectUser" parameterType="long" resultMap="userDetailMap">
+		SELECT u.*, ud.*
+		FROM users u
+		LEFT OUTER JOIN users_detail ud ON u.user_num = ud.user_num
+		WHERE u.user_num = #{user_num}
+	</select>
+
+	<select id="selectRealtor" parameterType="long" resultMap="userDetailMap">
+		SELECT
+	        u.user_num,
+	        u.id,
+	        u.nick_name,
+	        u.authority,
+	        u.passwd,
+	        u.user_type AS user_type,
+	        rd.realtor_num,
+	        rd.name AS r_name,
+	        rd.phone AS r_phone,
+	        rd.email AS r_email,
+	        rd.zipcode AS r_zipcode,
+	        rd.address1 AS r_address1,
+	        rd.address2 AS r_address2,
+	        rd.photo AS r_photo,
+	        rd.photo_name AS r_photo_name,
+	        rd.certificate AS r_certificate,
+	        rd.certificate_name AS r_certificate_name,
+	        rd.valid_date,
+	        rd.reg_date AS r_reg_date,
+	        rd.modi_date AS r_modi_date
+		FROM users u
+		LEFT OUTER JOIN realtor_detail rd ON u.user_num = rd.realtor_num
+		WHERE u.user_num = #{user_num}
+	</select>
+	
+	<select id="selectRealtorByEmail" parameterType="string" resultMap="userDetailMap">
+	    SELECT
+	        u.user_num,
+	        u.id,
+	        u.nick_name,
+	        u.authority,
+	        u.passwd,
+	        rd.realtor_num,
+	        rd.name AS r_name,
+	        rd.phone AS r_phone,
+	        rd.email AS r_email,
+	        rd.zipcode AS r_zipcode,
+	        rd.address1 AS r_address1,
+	        rd.address2 AS r_address2,
+	        rd.photo AS r_photo,
+	        rd.photo_name AS r_photo_name,
+	        rd.certificate AS r_certificate,
+	        rd.certificate_name AS r_certificate_name,
+	        rd.valid_date,
+	        rd.reg_date AS r_reg_date,
+	        rd.modi_date AS r_modi_date
+	    FROM users u
+	    JOIN realtor_detail rd ON u.user_num = rd.realtor_num
+	    WHERE rd.email = #{email}
+	</select>
+
+	<!-- 비밀번호 찾기 - 이메일, id 정보 가져오기 -->
+	<select id="selectIdEmailCheckUser" resultMap="userDetailMap">
+	    SELECT 
+	        u.user_num, u.id, u.authority,
+	        ud.email AS email,
+	        rd.email AS r_email
+	    FROM users u
+	    LEFT OUTER JOIN users_detail ud ON u.user_num = ud.user_num
+	    LEFT OUTER JOIN realtor_detail rd ON u.user_num = rd.realtor_num
+	    WHERE u.id = #{id}
+	</select>
+	
+	
+	
+	<!-- user_num으로 단일 회원 조회 -->
+	<select id="selectUserByNum" parameterType="long" resultMap="userDetailMap">
+	    SELECT 
+	        u.user_num,
+	        u.id,
+	        u.nick_name,
+	        u.authority,
+	        u.passwd,
+	        u.report_count,
+	        u.user_type,
+	        u.oauth,
+	
+	        -- users_detail
+	        ud.name,
+	        ud.phone,
+	        ud.email,
+	        ud.zipcode,
+	        ud.address1,
+	        ud.address2,
+	        ud.photo,
+	        ud.photo_name,
+	        ud.modi_date,
+	        ud.reg_date,
+	
+	        -- realtor_detail
+	        rd.realtor_num,
+	        rd.name AS r_name,
+	        rd.phone AS r_phone,
+	        rd.email AS r_email,
+	        rd.zipcode AS r_zipcode,
+	        rd.address1 AS r_address1,
+	        rd.address2 AS r_address2,
+	        rd.photo AS r_photo,
+	        rd.photo_name AS r_photo_name,
+	        rd.certificate AS r_certificate,
+	        rd.certificate_name AS r_certificate_name,
+	        rd.valid_date,
+	        rd.reg_date AS r_reg_date,
+	        rd.modi_date AS r_modi_date
+	
+	    FROM users u
+	    LEFT OUTER JOIN users_detail ud ON u.user_num = ud.user_num
+	    LEFT OUTER JOIN realtor_detail rd ON u.user_num = rd.realtor_num
+	    WHERE u.user_num = #{user_num}
+	</select>
+
+</mapper>
+
+
+
+
+
+

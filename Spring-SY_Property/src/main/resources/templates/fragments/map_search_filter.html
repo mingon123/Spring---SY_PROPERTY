@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<th:block th:fragment="topbar">
+  <link rel="stylesheet" th:href="@{/assets/css/hd.css}" type="text/css">
+
+  <style>
+    .map_search_filter {
+      display: flex;
+      gap: 10px;
+      padding: 10px 20px;
+      background: #f5f5f5;
+    }
+
+	.dropdown {
+	  position: relative;
+	  width: 140px;
+	  font-family: 'Arial', sans-serif;
+	}
+
+	.dropdown > span {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  background: #ffffff;
+	  color: #333;
+	  padding: 10px 14px;
+	  border-radius: 8px;
+	  cursor: pointer;
+	  border: 2px solid #016dd9;
+	  font-weight: 500;
+	  transition: all 0.2s ease-in-out;
+	  box-shadow: 0 2px 6px rgba(1, 109, 217, 0.1);
+	}
+
+	.dropdown > span::after {
+	  content: "▾";
+	  font-size: 12px;
+	  margin-left: 8px;
+	}
+
+	.dropdown ul {
+	  position: absolute;
+	  top: 110%;
+	  left: 0;
+	  width: 100%;
+	  background: #ffffff;
+	  border: 1px solid #ccc;
+	  border-radius: 8px;
+	  margin: 0;
+	  padding: 0;
+	  list-style: none;
+	  opacity: 0;
+	  visibility: hidden;
+	  transform: translateY(5px);
+	  transition: all 0.3s ease;
+	  z-index: 999;
+	  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+	}
+
+	.dropdown.open ul {
+	  opacity: 1;
+	  visibility: visible;
+	  transform: translateY(0);
+	}
+
+	.dropdown ul li a {
+	  display: block;
+	  padding: 10px 14px;
+	  color: #333;
+	  text-decoration: none;
+	  transition: background 0.2s;
+	  border-radius: 6px;
+	}
+
+	.dropdown ul li a:hover {
+	  background: #016dd9;
+	  color: white;
+	}
+
+  </style>
+
+  <div class="map_search_filter">
+    <div class="dropdown" data-name="dealType">
+      <input type="hidden" name="dealType" value="전체" />
+      <span>월세/전세</span>
+      <ul>
+        <li><a href="#">전체</a></li>
+        <li><a href="#">월세</a></li>
+        <li><a href="#">전세</a></li>
+      </ul>
+    </div>
+
+    <div class="dropdown" data-name="area">
+      <input type="hidden" name="area" value="시" />
+      <span>시/군/구/동</span>
+      <ul>
+        <li><a href="#">시</a></li>
+        <li><a href="#">군</a></li>
+        <li><a href="#">구</a></li>
+        <li><a href="#">동</a></li>
+      </ul>
+    </div>
+
+    <div class="dropdown" data-name="floor">
+      <input type="hidden" name="floor" value="1층" />
+      <span>층수</span>
+      <ul>
+        <li><a href="#">1층</a></li>
+        <li><a href="#">2층 이상</a></li>
+        <li><a href="#">반지하</a></li>
+      </ul>
+    </div>
+
+    <div class="dropdown" data-name="size">
+      <input type="hidden" name="size" value="10평 미만" />
+      <span>면적</span>
+      <ul>
+        <li><a href="#">10평 미만</a></li>
+        <li><a href="#">10~20평</a></li>
+        <li><a href="#">20평 이상</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".dropdown > span").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const dropdown = btn.parentElement;
+          dropdown.classList.toggle("open");
+        });
+      });
+
+      document.querySelectorAll(".dropdown ul li a").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const text = this.textContent;
+          const dropdown = this.closest(".dropdown");
+          dropdown.querySelector("span").textContent = text;
+          dropdown.querySelector("input[type=hidden]").value = text;
+          dropdown.classList.remove("open");
+        });
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".dropdown")) {
+          document.querySelectorAll(".dropdown").forEach(function (d) {
+            d.classList.remove("open");
+          });
+        }
+      });
+    });
+  </script>
+</th:block>
+
+</html>

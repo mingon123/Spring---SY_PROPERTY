@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper   
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.spring.faq.dao.FaqMapper">
+
+  <!-- faq 목록 -->
+  <select id="selectList" parameterType="map"
+        resultType="kr.spring.faq.vo.FaqVO">
+  SELECT *
+  FROM (
+    SELECT a.*, rownum rnum
+    FROM (
+      SELECT faq_num, title, content, reg_date
+      FROM faq
+      <include refid="faqSearch"/>
+      ORDER BY faq_num DESC
+    ) a
+  )
+  WHERE rnum BETWEEN #{start} AND #{end}
+</select>
+
+
+  <!-- faq 총 개수 -->
+  <select id="selectRowCount" resultType="int">
+    SELECT COUNT(*) FROM faq
+  </select>
+
+  <!-- faq 등록 -->
+  <insert id="insertFaq" parameterType="kr.spring.faq.vo.FaqVO">
+    INSERT INTO faq (
+      faq_num, title, content, reg_date
+    ) VALUES (
+      faq_seq.nextval, #{title}, #{content}, SYSDATE
+    )
+  </insert>
+
+  <!-- faq 상세 -->
+  <select id="selectFaq" parameterType="long"
+          resultType="kr.spring.faq.vo.FaqVO">
+    SELECT * FROM faq
+    WHERE faq_num = #{faq_num}
+  </select>
+
+  <!-- faq 수정 -->
+  <update id="updateFaq" parameterType="kr.spring.faq.vo.FaqVO">
+    UPDATE faq
+    SET title = #{title},
+        content = #{content}
+    WHERE faq_num = #{faq_num}
+  </update>
+
+  <!-- faq 삭제 -->
+  <delete id="deleteFaq" parameterType="long">
+    DELETE FROM faq WHERE faq_num = #{faq_num}
+  </delete>
+  
+  <!-- 검색 -->
+	<sql id="faqSearch">
+		<where>
+			<if test="category != null and category != ''">
+				category = #{category}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				<if test="category != null and category != ''">
+					AND
+				</if>
+				<if test="keyfield == 1">
+					title LIKE '%' || #{keyword} || '%'
+				</if>
+				<if test="keyfield == 2">
+					content LIKE '%' || #{keyword} || '%'
+				</if>
+				<if test="keyfield == 3">
+					(title LIKE '%' || #{keyword} || '%' OR
+					 content LIKE '%' || #{keyword} || '%')
+				</if>
+			</if>
+		</where>
+	</sql>
+
+</mapper>

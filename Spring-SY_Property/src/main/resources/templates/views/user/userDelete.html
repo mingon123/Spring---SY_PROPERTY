@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_basic}">
+<head>
+<meta charset="UTF-8">
+<title>회원 탈퇴</title>
+<link rel="stylesheet" th:href="@{/assets/css/mg_user.css}">
+<style>
+.page-main {
+    max-width: 480px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    border: 1px solid #e1e6ee;
+}
+.page-main h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+.page-main ul {
+    list-style: none;
+    padding: 0;
+}
+.page-main li {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.page-main label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
+}
+.page-main input[type="text"],
+.page-main input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+.page-main input[type="text"]:focus,
+.page-main input[type="password"]:focus {
+    border-color: #00aaff;
+    outline: none;
+    box-shadow: 0 0 4px rgba(0,170,255,0.4);
+}
+.align-center {
+    text-align: center;
+    margin-top: 25px;
+}
+.align-center input[type="submit"],
+.align-center input[type="button"] {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #00aaff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 0 5px;
+    margin-top: 10px;
+    height: auto;
+}
+.align-center input[type="submit"]:hover,
+.align-center input[type="button"]:hover {
+    background-color: #008ecc;
+}
+.error-color {
+    color: #ff4e4e;
+    font-size: 13px;
+    margin-top: 5px;
+    text-align: left;
+}
+.field-color {
+    border: 1px solid #ff4e4e !important;
+}
+
+</style>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+	<h2>회원 탈퇴</h2>
+	<form th:object="${userVO}" id="user_delete" th:action="@{delete}" method="post">
+		<div th:if="${#fields.hasGlobalErrors()}" class="error-color">
+			<p th:each="err : ${#fields.globalErrors()}" th:text="${err}" class="align-center"></p>
+		</div>
+		<ul>
+			<li>
+				<label for="id">아이디</label>
+				<input type="text" th:field="*{id}" th:errorclass="field-color">
+				<span th:errors="*{id}" class="error-color"></span>
+			</li>
+			<li>
+				<label for="passwd">비밀번호</label>
+				<input type="password" th:field="*{passwd}" th:errorclass="field-color">
+				<span th:errors="*{passwd}" class="error-color"></span>
+			</li>
+		</ul>
+		<div class="align-center">
+			<input type="submit" value="전송">
+			<input type="button" value="마이페이지" onclick="history.back()">
+		</div>
+	</form>
+</div>
+</body>
+</html>

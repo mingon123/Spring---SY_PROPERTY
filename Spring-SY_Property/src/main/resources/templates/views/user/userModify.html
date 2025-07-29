@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout_mypage}">
+<head>
+<meta charset="UTF-8">
+<meta name="csrf-header" th:content="${_csrf.headerName}">
+<meta name="csrf-token" th:content="${_csrf.token}">
+<title>회원권한 수정</title>
+<script th:src="@{/assets/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/assets/js/user.modify.js}"></script>
+<link rel="stylesheet" th:href="@{/assets/css/mg_nrealtor.css}"/>
+</head>
+<body>
+<div layout:fragment="content" class="page-main">
+  <h2>회원정보수정</h2>
+  <form th:action="@{/user/updateUser}" th:object="${userVO}" id="member_modify" method="post">
+   		<input type="hidden" th:field="*{user_num}">
+  		<input type="hidden" th:field="*{userDetail.user_num}">
+  		<input type="hidden" name="user_type" value="USER"/>
+    	<ul>
+      		<li>
+				<label>이름</label>
+		    	<input type="text" th:field="*{userDetail.name}" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.name}" class="error-color"></span>
+      		</li>
+      		<li class="zip-row">
+			  	<label>별명</label>
+			  	<div class="zip-flex">
+			    	<input type="text" th:field="*{nick_name}" id="nick_name" th:errorclass="field-error" />
+			    	<button type="button" id="confirm_nick" class="nrealtor-btn" style="display: none;">중복체크</button>
+			  	</div>
+			  	<div class="msg-block-wrap">
+			    	<span id="message_nick" class="msg-block"></span>
+			    	<span th:errors="*{nick_name}" class="error-color"></span>
+			  	</div>
+			</li>
+      		<li>
+		    	<label>이메일</label>
+		    	<input type="email" th:field="*{userDetail.email}" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.email}" class="error-color"></span>
+      		</li>
+	      	<li>
+ 		    	<label>전화번호</label>
+		    	<input type="text" th:value="*{userDetail.formattedPhone}" name="userDetail.phone" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.phone}" class="error-color"></span>
+      		</li>
+		  	<li class="zip-row">
+		  		<label>우편번호</label>
+		  		<div class="zip-flex">
+		    		<input type="text" th:field="*{userDetail.zipcode}" id="zipcode" />
+		    		<input type="button" onclick="execDaumPostcode()" value="우편번호 찾기" class="nrealtor-btn" />
+		  		</div>
+		  		<span th:errors="*{userDetail.zipcode}" class="error-color"></span>
+		  	</li>
+      		<li>
+        		<label>주소</label>
+        		<input type="text" th:field="*{userDetail.address1}" id="address1" th:errorclass="field-error"/>
+        		<span th:errors="*{userDetail.address1}" class="error-color"></span>
+      		</li>
+      		<li>
+		    	<label>상세주소</label>
+		    	<input type="text" th:field="*{userDetail.address2}" id="address2" th:errorclass="field-error" />
+		    	<span th:errors="*{userDetail.address2}" class="error-color"></span>
+      		</li>
+    	</ul>
+
+    	<div class="align-center">
+      		<input type="submit" value="저장" class="nrealtor-btn" />
+      		<input type="button" value="마이페이지" class="nrealtor-btn" onclick="location.href='/user/myPage'" />
+    	</div>
+	</form>
+
+<!-- 다음 우편번호 API -->
+<div id="layer" style="display:none;position:fixed;overflow:hidden;z-index:1;-webkit-overflow-scrolling:touch;">
+  <img src="//t1.daumcdn.net/postcode/resource/images/close.png" id="btnCloseLayer"
+       style="cursor:pointer;position:absolute;right:-3px;top:-3px;z-index:1" onclick="closeDaumPostcode()" alt="닫기 버튼">
+</div>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+  var element_layer = document.getElementById('layer');
+
+  function closeDaumPostcode() {
+    element_layer.style.display = 'none';
+  }
+
+  function execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        var addr = '', extraAddr = '';
+        if (data.userSelectedType === 'R') {
+          addr = data.roadAddress;
+          if (data.bname && /[동|로|가]$/g.test(data.bname)) extraAddr += data.bname;
+          if (data.buildingName && data.apartment === 'Y') extraAddr += (extraAddr ? ', ' + data.buildingName : data.buildingName);
+          if (extraAddr) extraAddr = ' (' + extraAddr + ')';
+        } else {
+          addr = data.jibunAddress;
+        }
+        document.getElementById('zipcode').value = data.zonecode;
+        document.getElementById('address1').value = addr + extraAddr;
+        document.getElementById('address2').focus();
+        element_layer.style.display = 'none';
+      },
+      width: '100%',
+      height: '100%',
+      maxSuggestItems: 5
+    }).embed(element_layer);
+
+    element_layer.style.display = 'block';
+    initLayerPosition();
+  }
+
+  function initLayerPosition() {
+    const width = 300, height = 400, borderWidth = 5;
+    element_layer.style.width = width + 'px';
+    element_layer.style.height = height + 'px';
+    element_layer.style.border = borderWidth + 'px solid';
+    element_layer.style.left = (((window.innerWidth || document.documentElement.clientWidth) - width) / 2 - borderWidth) + 'px';
+    element_layer.style.top = (((window.innerHeight || document.documentElement.clientHeight) - height) / 2 - borderWidth) + 'px';
+  }
+</script>
+<!-- 다음 우편번호 API 끝 -->
+</div>
+</body>
+</html>
